@@ -9,6 +9,18 @@ const routes = [
     meta: { public: true },
   },
   {
+    path: '/criar-conta',
+    name: 'signup',
+    component: () => import('@/views/SignupView.vue'),
+    meta: { public: true },
+  },
+  {
+    path: '/auth/callback',
+    name: 'auth-callback',
+    component: () => import('@/views/AuthCallbackView.vue'),
+    meta: { public: true },
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/DashboardView.vue'),
