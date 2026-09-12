@@ -2,28 +2,28 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useToastStore } from '@/stores/toast'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import AuthLayout from '@/components/auth/AuthLayout.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
+const toastStore = useToastStore()
 
 const email = ref('')
 const password = ref('')
-const error = ref('')
 const loading = ref(false)
 
 async function handleSubmit() {
-  error.value = ''
   if (!email.value || !password.value) {
-    error.value = 'Informe e-mail e senha para continuar.'
+    toastStore.error('Informe e-mail e senha para continuar.')
     return
   }
   loading.value = true
   const { error: authError } = await userStore.login(email.value, password.value)
   loading.value = false
   if (authError) {
-    error.value = authError
+    toastStore.error(authError)
     return
   }
   router.push({ name: 'dashboard' })
@@ -60,8 +60,6 @@ async function handleSubmit() {
           placeholder="••••••••"
         />
       </div>
-
-      <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
 
       <a href="#" class="text-sm text-brand-600 block text-right">Esqueci minha senha</a>
 

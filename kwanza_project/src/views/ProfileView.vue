@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/user'
 import { skills, medals, recentActivities } from '@/data/mockData'
 import StatCard from '@/components/StatCard.vue'
 import SkillBar from '@/components/SkillBar.vue'
+import defaultAvatar from '@/assets/images/default-avatar.png'
 
 const userStore = useUserStore()
 const user = userStore.user
@@ -25,9 +26,11 @@ function handleSave() {
 <template>
   <div class="max-w-3xl space-y-6">
     <div class="text-center">
-      <div class="w-20 h-20 rounded-full bg-brand-600 text-white flex items-center justify-center text-2xl font-bold mx-auto mb-3">
-        {{ user.initials }}
-      </div>
+      <img
+        :src="user.avatarUrl || defaultAvatar"
+        alt="Foto de perfil"
+        class="w-20 h-20 rounded-full object-cover mx-auto mb-3"
+      />
       <h1 class="text-xl font-bold text-slate-900 dark:text-white">{{ user.name }}</h1>
       <p class="text-sm text-slate-500 dark:text-slate-400">
         Nível {{ user.level }} · {{ user.levelName }} · {{ user.streakDays }} dias · #{{ user.rankPosition }}

@@ -4,6 +4,7 @@ export const currentUser = {
   id: 1,
   name: 'Zuri Mendes',
   initials: 'ZM',
+  avatarUrl: '',
   email: 'zuri.mendes@kwanza.org',
   phone: '',
   birthDate: '',

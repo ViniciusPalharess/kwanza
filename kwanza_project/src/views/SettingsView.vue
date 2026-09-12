@@ -1,11 +1,13 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { Building2, Trophy, Users, ShieldCheck, DatabaseBackup, Plus, Pencil, Trash2, Upload } from 'lucide-vue-next'
+import { Building2, Trophy, Users, ShieldCheck, DatabaseBackup, Plus, Pencil, Trash2, Upload, Moon } from 'lucide-vue-next'
 import { useSettingsStore } from '@/stores/settings'
+import { useThemeStore } from '@/stores/theme'
 import Modal from '@/components/ui/Modal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 const store = useSettingsStore()
+const themeStore = useThemeStore()
 
 const roleOptions = ['Administrador', 'Coordenador', 'Professor', 'Monitor']
 const roleColors = {
@@ -154,6 +156,27 @@ function confirmDeleteUser() {
             <button type="button" class="text-slate-400 hover:text-red-500" @click="askDeleteUser(user)"><Trash2 class="w-3.5 h-3.5" /></button>
           </li>
         </ul>
+      </div>
+
+      <!-- Aparência -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700">
+        <h2 class="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white mb-4">
+          <Moon class="w-5 h-5 text-brand-600" /> Aparência
+        </h2>
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-slate-700 dark:text-slate-200">Modo escuro</span>
+          <button
+            type="button"
+            class="w-10 h-6 rounded-full transition"
+            :class="themeStore.dark ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-600'"
+            @click="themeStore.toggle()"
+          >
+            <span
+              class="block w-5 h-5 bg-white rounded-full shadow transition-transform"
+              :class="themeStore.dark ? 'translate-x-4' : 'translate-x-0.5'"
+            />
+          </button>
+        </div>
       </div>
 
       <!-- Permissões & Categorias -->

@@ -48,7 +48,7 @@ export const useUserStore = defineStore('user', {
     },
 
     async signUp({ name, email, password }) {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -56,7 +56,15 @@ export const useUserStore = defineStore('user', {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
-      return { error: error ? translateAuthError(error.message) : null }
+      if (error) {
+        return { error: translateAuthError(error.message) }
+      }
+      // Supabase retorna sucesso com identities vazio quando o e-mail já está cadastrado,
+      // para não revelar a existência da conta a quem não é o dono dela.
+      if (data.user && data.user.identities?.length === 0) {
+        return { error: 'Já existe uma conta com este e-mail. Tente entrar.' }
+      }
+      return { error: null }
     },
 
     async loginWithOAuth(provider) {

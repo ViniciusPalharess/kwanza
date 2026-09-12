@@ -8,6 +8,7 @@ import { nextGoals, skills, medals, recentActivities } from '@/data/mockData'
 import StatCard from '@/components/StatCard.vue'
 import SkillBar from '@/components/SkillBar.vue'
 import CourseCard from '@/components/CourseCard.vue'
+import defaultAvatar from '@/assets/images/default-avatar.png'
 
 const userStore = useUserStore()
 const user = userStore.user
@@ -24,9 +25,11 @@ const circumference = 2 * Math.PI * 34
     <div class="rounded-2xl p-6 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-800 text-white relative overflow-hidden">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div class="flex items-center gap-4">
-          <div class="w-16 h-16 rounded-full bg-white/15 border-2 border-white/40 flex items-center justify-center text-xl font-bold">
-            {{ user.initials }}
-          </div>
+          <img
+            :src="user.avatarUrl || defaultAvatar"
+            alt="Foto de perfil"
+            class="w-16 h-16 rounded-full object-cover border-2 border-white/40"
+          />
           <div>
             <p class="text-brand-100 text-sm">Bem-vinda de volta,</p>
             <h1 class="text-2xl font-bold">{{ user.name }}</h1>

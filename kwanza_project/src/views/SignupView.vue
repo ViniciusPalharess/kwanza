@@ -3,39 +3,28 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Mail } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
+import { useToastStore } from '@/stores/toast'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import AuthLayout from '@/components/auth/AuthLayout.vue'
 import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 import MicrosoftIcon from '@/components/icons/MicrosoftIcon.vue'
 
 const userStore = useUserStore()
+const toastStore = useToastStore()
 
 const step = ref('choice') // 'choice' | 'form' | 'sent'
 const name = ref('')
 const email = ref('')
 const password = ref('')
-const error = ref('')
 const loading = ref(false)
-const oauthLoading = ref(null)
-
-async function handleOAuth(provider) {
-  error.value = ''
-  oauthLoading.value = provider
-  const { error: authError } = await userStore.loginWithOAuth(provider)
-  if (authError) {
-    error.value = authError
-    oauthLoading.value = null
-  }
-}
 
 async function handleSignup() {
-  error.value = ''
   if (!name.value || !email.value || !password.value) {
-    error.value = 'Preencha todos os campos para continuar.'
+    toastStore.error('Preencha todos os campos para continuar.')
     return
   }
   if (password.value.length < 6) {
-    error.value = 'A senha deve ter pelo menos 6 caracteres.'
+    toastStore.error('A senha deve ter pelo menos 6 caracteres.')
     return
   }
   loading.value = true
@@ -46,9 +35,10 @@ async function handleSignup() {
   })
   loading.value = false
   if (authError) {
-    error.value = authError
+    toastStore.error(authError)
     return
   }
+  toastStore.success('Conta criada! Confira seu e-mail para confirmar.')
   step.value = 'sent'
 }
 </script>
@@ -60,41 +50,36 @@ async function handleSignup() {
     </p>
 
     <template v-if="step === 'choice'">
-      <h2 class="text-xl font-bold mb-1 text-slate-900">Criar sua conta</h2>
-      <p class="text-sm text-slate-500 mb-5">Escolha como deseja continuar.</p>
+      <h2 class="text-3xl font-bold mb-8 text-[#616161] text-center">Criar sua conta</h2>
 
       <div class="space-y-3">
         <button
           type="button"
           @click="step = 'form'"
-          class="w-full flex items-center gap-3 border border-slate-200 rounded-lg px-4 py-2.5 hover:bg-slate-50 transition font-medium text-slate-700"
+          class="relative w-full flex items-center border border-slate-200 rounded-lg px-4 py-2.5 hover:bg-slate-50 transition font-medium text-[#616161]"
         >
-          <Mail class="w-5 h-5 text-slate-400" />
-          Continuar com E-mail
+          <Mail class="absolute left-4 w-5 h-5 text-slate-400" />
+          <span class="flex-1 text-center">Continuar com E-mail</span>
         </button>
         <button
           type="button"
-          :disabled="!!oauthLoading"
-          @click="handleOAuth('google')"
-          class="w-full flex items-center gap-3 border border-slate-200 rounded-lg px-4 py-2.5 hover:bg-slate-50 transition font-medium text-slate-700 disabled:opacity-50"
+          disabled
+          class="relative w-full flex items-center border border-slate-200 rounded-lg px-4 py-2.5 transition font-medium text-[#616161] opacity-50 cursor-not-allowed"
         >
-          <GoogleIcon class="w-5 h-5" />
-          {{ oauthLoading === 'google' ? 'Redirecionando...' : 'Continuar com Google' }}
+          <GoogleIcon class="absolute left-4 w-5 h-5" />
+          <span class="flex-1 text-center">Continuar com Google</span>
         </button>
         <button
           type="button"
-          :disabled="!!oauthLoading"
-          @click="handleOAuth('azure')"
-          class="w-full flex items-center gap-3 border border-slate-200 rounded-lg px-4 py-2.5 hover:bg-slate-50 transition font-medium text-slate-700 disabled:opacity-50"
+          disabled
+          class="relative w-full flex items-center border border-slate-200 rounded-lg px-4 py-2.5 transition font-medium text-[#616161] opacity-50 cursor-not-allowed"
         >
-          <MicrosoftIcon class="w-5 h-5" />
-          {{ oauthLoading === 'azure' ? 'Redirecionando...' : 'Continuar com Microsoft' }}
+          <MicrosoftIcon class="absolute left-4 w-5 h-5" />
+          <span class="flex-1 text-center">Continuar com Microsoft</span>
         </button>
       </div>
 
-      <p v-if="error" class="text-sm text-red-600 mt-4">{{ error }}</p>
-
-      <p class="text-sm text-center text-slate-500 mt-6">
+      <p class="text-sm text-center text-[#616161] mt-6">
         Já tem uma conta?
         <RouterLink :to="{ name: 'login' }" class="text-brand-700 font-semibold">Entrar</RouterLink>
       </p>
@@ -138,8 +123,6 @@ async function handleSignup() {
             placeholder="••••••••"
           />
         </div>
-
-        <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
 
         <button
           type="submit"
