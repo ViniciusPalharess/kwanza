@@ -2,7 +2,11 @@
 import { computed, reactive } from 'vue'
 import { UserCheck, UserX, CalendarCheck, Clock3, Check, X } from 'lucide-vue-next'
 import { attendanceSummary, calendarMonth, checkins } from '@/data/mockData'
+import { useParticipantsStore } from '@/stores/participants'
 import StatCard from '@/components/StatCard.vue'
+import defaultAvatar from '@/assets/images/default-avatar.png'
+
+const participantsStore = useParticipantsStore()
 
 const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 
@@ -17,22 +21,31 @@ const days = computed(() => {
   return cells
 })
 
-const checkinList = reactive(checkins.map((c) => ({ ...c })))
-const summary = reactive({ ...attendanceSummary })
+// Junta o check-in de hoje com os dados reais da lista de participantes,
+// para que nome, foto e frequência batam nas duas telas.
+const checkinList = reactive(
+  checkins.map((c) => {
+    const person = participantsStore.participants.find((p) => p.id === c.id)
+    return { ...c, name: person?.name, initials: person?.initials, avatarUrl: person?.avatarUrl }
+  }),
+)
+
+const summary = computed(() => {
+  const present = checkinList.filter((p) => p.present).length
+  const total = checkinList.length
+  return {
+    ...attendanceSummary,
+    present,
+    absent: total - present,
+    rate: total ? Math.round((present / total) * 100) : 0,
+  }
+})
 
 function markPresent(person) {
-  if (!person.present) {
-    person.present = true
-    summary.present += 1
-    summary.absent -= 1
-  }
+  person.present = true
 }
 function markAbsent(person) {
-  if (person.present) {
-    person.present = false
-    summary.present -= 1
-    summary.absent += 1
-  }
+  person.present = false
 }
 </script>
 
@@ -80,9 +93,7 @@ function markAbsent(person) {
         <h2 class="font-bold text-lg text-slate-900 dark:text-white px-5 pt-5">Lista de participantes — Check-in</h2>
         <ul class="divide-y divide-slate-100 dark:divide-slate-700 mt-2">
           <li v-for="person in checkinList" :key="person.id" class="flex items-center gap-3 px-5 py-3">
-            <div class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
-              {{ person.initials }}
-            </div>
+            <img :src="person.avatarUrl || defaultAvatar" alt="Foto de perfil" class="w-9 h-9 rounded-full object-cover shrink-0" />
             <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ person.name }}</p>
               <p class="text-xs text-slate-500 dark:text-slate-400">Entrada {{ person.entrada }} · Saída {{ person.saida }}</p>

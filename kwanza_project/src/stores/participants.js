@@ -14,15 +14,17 @@ let nextId = Math.max(...ranking.map((p) => p.id)) + 1
 
 export const useParticipantsStore = defineStore('participants', {
   state: () => ({
-    list: ranking.map((p) => ({ ...p })),
+    list: ranking.map((p) => ({ role: 'Participante', ...p })),
   }),
   getters: {
-    sortedByScore: (state) => [...state.list].sort((a, b) => b.score - a.score),
+    participants: (state) => state.list.filter((p) => p.role === 'Participante'),
+    sortedByScore: (state) => [...state.list].filter((p) => p.role === 'Participante').sort((a, b) => b.score - a.score),
   },
   actions: {
     add(payload) {
       this.list.push({
         id: nextId++,
+        role: payload.role || 'Participante',
         levelName: payload.levelName || 'Broto',
         xp: payload.score || 0,
         initials: initialsFor(payload.name),

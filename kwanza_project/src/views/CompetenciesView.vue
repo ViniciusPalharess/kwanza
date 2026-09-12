@@ -118,7 +118,7 @@ function confirmDelete() {
           <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300">Participante</label>
           <input v-model="form.name" required list="participant-options" type="text" class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2" />
           <datalist id="participant-options">
-            <option v-for="p in participantsStore.list" :key="p.id" :value="p.name" />
+            <option v-for="p in participantsStore.participants" :key="p.id" :value="p.name" />
           </datalist>
         </div>
         <div class="grid grid-cols-2 gap-3">

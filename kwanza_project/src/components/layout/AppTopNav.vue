@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import {
   LayoutDashboard,
@@ -14,10 +14,12 @@ import {
   Award,
   CreditCard,
   Settings,
-  User,
-  LogOut,
   MoreVertical,
   Bell,
+  HelpCircle,
+  Clock3,
+  Flame,
+  UserPlus,
 } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
 import ProfileModal from '@/components/profile/ProfileModal.vue'
@@ -26,10 +28,15 @@ import defaultAvatar from '@/assets/images/default-avatar.png'
 const userStore = useUserStore()
 const router = useRouter()
 
+const joinedAtFormatted = computed(() => {
+  if (!userStore.user.joinedAt) return ''
+  return new Date(userStore.user.joinedAt).toLocaleDateString('pt-BR')
+})
+
 const moreLinks = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin', label: 'Painel Admin', icon: ShieldCheck },
-  { to: '/participants', label: 'Participantes', icon: Users },
+  { to: '/participants', label: 'Pessoas', icon: Users },
   { to: '/courses', label: 'Cursos', icon: BookOpen },
   { to: '/attendance', label: 'Frequência', icon: CalendarCheck },
   { to: '/competencies', label: 'Competências', icon: Target },
@@ -64,27 +71,73 @@ function handleLogout() {
             <img
               :src="userStore.user.avatarUrl || defaultAvatar"
               alt="Foto de perfil"
-              class="w-9 h-9 rounded-full object-cover shrink-0"
+              class="w-7 h-7 rounded-full object-cover shrink-0"
             />
             <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 hidden sm:block">{{ userStore.user.name }}</p>
           </button>
 
           <template v-if="showUserMenu">
-            <div class="absolute right-0 top-full w-44 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-lg z-20 py-1.5">
-              <button
-                type="button"
-                class="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
-                @click="showProfileModal = true; showUserMenu = false"
-              >
-                <User class="w-4 h-4" /> Meus Dados
-              </button>
-              <button
-                type="button"
-                class="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
-                @click="handleLogout"
-              >
-                <LogOut class="w-4 h-4" /> Sair
-              </button>
+            <div class="absolute right-0 top-full w-96 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-lg z-20 p-4">
+              <div class="flex items-start gap-3">
+                <img
+                  :src="userStore.user.avatarUrl || defaultAvatar"
+                  alt="Foto de perfil"
+                  class="w-14 h-14 rounded-full object-cover shrink-0"
+                />
+                <div class="flex-1 min-w-0">
+                  <p class="font-bold text-slate-900 dark:text-white truncate">{{ userStore.user.name }}</p>
+                  <p class="text-xs">
+                    <button
+                      type="button"
+                      class="text-brand-600 dark:text-brand-400 font-semibold hover:underline"
+                      @click="showProfileModal = true; showUserMenu = false"
+                    >
+                      Meus Dados
+                    </button>
+                    <span class="text-slate-300 dark:text-slate-600"> | </span>
+                    <button type="button" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline" @click="handleLogout">
+                      Sair
+                    </button>
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{{ userStore.user.email }}</p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-xl font-bold text-brand-600 dark:text-brand-400 leading-none">{{ userStore.user.score }}</p>
+                  <p class="text-[11px] text-slate-400">pontos</p>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-400 dark:text-slate-500 mt-3">Usuário Kwanza desde {{ joinedAtFormatted }}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                Nível {{ userStore.user.level }} · {{ userStore.user.levelName }}
+                <HelpCircle class="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
+              </p>
+
+              <hr class="my-3 border-slate-100 dark:border-slate-700" />
+
+              <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">Minha Experiência</p>
+              <div class="space-y-1">
+                <div class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1.5"><Clock3 class="w-3.5 h-3.5 text-slate-400" /> Horas acumuladas</span>
+                  <span class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ userStore.user.hours }}h</span>
+                </div>
+                <RouterLink
+                  to="/attendance"
+                  class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300"
+                  @click="showUserMenu = false"
+                >
+                  <span class="flex items-center gap-1.5"><CalendarCheck class="w-3.5 h-3.5 text-slate-400" /> Frequência</span>
+                  <span class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ userStore.user.attendance }}%</span>
+                </RouterLink>
+                <div class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1.5"><Flame class="w-3.5 h-3.5 text-slate-400" /> Sequência</span>
+                  <span class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ userStore.user.streakDays }} dias</span>
+                </div>
+                <div class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1.5"><UserPlus class="w-3.5 h-3.5 text-slate-400" /> Convites realizados</span>
+                  <span class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ userStore.user.invites }}</span>
+                </div>
+              </div>
             </div>
           </template>
         </div>

@@ -23,7 +23,7 @@ const top5 = computed(() => participantsStore.sortedByScore.slice(0, 5))
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-      <StatCard label="Participantes" :value="participantsStore.list.length" :percent="9" :icon="Users" />
+      <StatCard label="Participantes" :value="participantsStore.participants.length" :percent="9" :icon="Users" />
       <StatCard label="Ativos" :value="adminStats.active" :percent="4" :icon="UserCheck" icon-bg="bg-emerald-50 dark:bg-emerald-500/10" icon-color="text-emerald-600" />
       <StatCard label="Cursos" :value="coursesStore.list.length" :icon="BookOpen" />
       <StatCard label="Horas cadastradas" :value="adminStats.hoursLogged" :percent="6" :icon="Clock3" />

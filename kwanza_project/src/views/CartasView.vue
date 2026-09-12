@@ -4,9 +4,9 @@ import { FileText, Printer, Download } from 'lucide-vue-next'
 import { useParticipantsStore } from '@/stores/participants'
 
 const participantsStore = useParticipantsStore()
-const selectedId = ref(participantsStore.list[0]?.id ?? null)
+const selectedId = ref(participantsStore.participants[0]?.id ?? null)
 
-const selected = computed(() => participantsStore.list.find((p) => p.id === selectedId.value))
+const selected = computed(() => participantsStore.participants.find((p) => p.id === selectedId.value))
 
 // Competências ilustrativas derivadas da pontuação, apenas para compor o texto da carta
 function skillsFor(person) {
@@ -40,7 +40,7 @@ function printLetter() {
         v-model.number="selectedId"
         class="border border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg px-3 py-2 text-sm min-w-[200px]"
       >
-        <option v-for="p in participantsStore.list" :key="p.id" :value="p.id">{{ p.name }}</option>
+        <option v-for="p in participantsStore.participants" :key="p.id" :value="p.id">{{ p.name }}</option>
       </select>
     </div>
 

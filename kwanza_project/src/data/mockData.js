@@ -6,6 +6,7 @@ export const currentUser = {
   initials: 'ZM',
   avatarUrl: '',
   email: 'zuri.mendes@kwanza.org',
+  joinedAt: '2024-03-10',
   phone: '',
   birthDate: '',
   bio: 'Apaixonada por liderança e comunicação, em constante evolução no Projeto Kwanza.',
@@ -173,11 +174,10 @@ export const xpEvolutionValues = [1500, 2050, 2650, 3200, 3900, 4700]
 export const attendanceMonthlyValues = [62, 70, 85, 65, 80, 90]
 
 // ---- Frequência ----
+// present/absent/rate são calculados a partir de `checkins` na tela de Frequência,
+// para que os números sempre batam com a lista de participantes.
 export const attendanceSummary = {
   meetingLabel: 'Encontro semanal · Junho 2026',
-  present: 8,
-  absent: 2,
-  rate: 80,
   avgDuration: '3h',
 }
 
@@ -188,15 +188,16 @@ export const calendarMonth = {
   today: 18,
 }
 
+// Check-in do encontro de hoje. Nome/iniciais/foto vêm da lista de participantes (mesmo id).
 export const checkins = [
-  { id: 1, name: 'Amara Nzinga', initials: 'AN', entrada: '08:00', saida: '11:00', present: true },
-  { id: 2, name: 'Kwame Tavares', initials: 'KT', entrada: '09:07', saida: '12:05', present: true },
-  { id: 3, name: 'Zuri Mendes', initials: 'ZM', entrada: '08:14', saida: '11:10', present: true },
-  { id: 4, name: 'Jabari Costa', initials: 'JC', entrada: '—', saida: '—', present: false },
-  { id: 5, name: 'Imani Souza', initials: 'IS', entrada: '08:28', saida: '11:20', present: true },
-  { id: 6, name: 'Tariq Almeida', initials: 'TA', entrada: '09:35', saida: '12:25', present: true },
-  { id: 7, name: 'Nia Fernandes', initials: 'NF', entrada: '08:42', saida: '11:30', present: true },
-  { id: 8, name: 'Sefu Oliveira', initials: 'SO', entrada: '—', saida: '—', present: false },
+  { id: 1, entrada: '08:00', saida: '11:00', present: true },
+  { id: 2, entrada: '09:07', saida: '12:05', present: true },
+  { id: 3, entrada: '08:14', saida: '11:10', present: true },
+  { id: 4, entrada: '—', saida: '—', present: false },
+  { id: 5, entrada: '08:28', saida: '11:20', present: true },
+  { id: 6, entrada: '09:35', saida: '12:25', present: true },
+  { id: 7, entrada: '08:42', saida: '11:30', present: true },
+  { id: 8, entrada: '—', saida: '—', present: false },
 ]
 
 // ---- Competências ----
