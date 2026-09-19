@@ -15,9 +15,9 @@ let nextUserId = 5
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
     institution: {
-      name: 'Kenya Club',
+      name: 'Kenia Club',
       project: 'Projeto Kwanza',
-      email: 'contato@kenyaclub.org',
+      email: 'contato@keniaclub.org',
     },
     levels: [
       { id: 1, name: 'Nível 1 · Semente', xp: 0 },

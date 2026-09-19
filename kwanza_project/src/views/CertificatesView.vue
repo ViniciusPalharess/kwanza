@@ -79,7 +79,7 @@ function confirmDelete() {
     <div class="rounded-2xl p-8 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-900 text-white text-center relative overflow-hidden">
       <Award class="w-10 h-10 mx-auto mb-3 text-amber-300" />
       <h2 class="text-xl font-bold">Certificado de Conclusão</h2>
-      <p class="text-brand-100 text-sm mb-4">Kenya Club · Projeto Kwanza</p>
+      <p class="text-brand-100 text-sm mb-4">Kenia Club · Projeto Kwanza</p>
       <p class="text-brand-50 max-w-lg mx-auto">
         Certificamos que <strong>{{ featuredCertificate.participant }}</strong> concluiu com êxito o curso
         <strong>{{ featuredCertificate.course }}</strong>, com carga horária de {{ featuredCertificate.hours }} horas.

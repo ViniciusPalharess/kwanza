@@ -13,6 +13,12 @@ function translateAuthError(message) {
   return ERROR_MESSAGES[message] || message
 }
 
+// Respeita o base path do deploy (ex: /kwanza/ no GitHub Pages), em vez de
+// assumir que o site está servido na raiz do domínio.
+function authCallbackUrl() {
+  return `${window.location.origin}${import.meta.env.BASE_URL}auth/callback`
+}
+
 export const useUserStore = defineStore('user', {
   state: () => ({
     isAuthenticated: false,
@@ -53,7 +59,7 @@ export const useUserStore = defineStore('user', {
         password,
         options: {
           data: { name },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: authCallbackUrl(),
         },
       })
       if (error) {
@@ -70,7 +76,7 @@ export const useUserStore = defineStore('user', {
     async loginWithOAuth(provider) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: { redirectTo: authCallbackUrl() },
       })
       return { error: error ? translateAuthError(error.message) : null }
     },

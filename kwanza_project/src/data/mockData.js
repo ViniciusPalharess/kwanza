@@ -38,16 +38,6 @@ export const skills = [
   { id: 6, name: 'Proatividade', value: 77 },
 ]
 
-// Versão curta dos rótulos para o gráfico radar
-export const radarSkills = [
-  { label: 'Comunicação', value: 71 },
-  { label: 'Liderança', value: 73 },
-  { label: 'Oratória', value: 60 },
-  { label: 'Conflitos', value: 79 },
-  { label: 'Equipe', value: 64 },
-  { label: 'Proatividade', value: 77 },
-]
-
 export const medals = [
   { id: 1, name: 'Pontualidade', unlocked: true, color: '#2563eb' },
   { id: 2, name: 'Líder Nato', unlocked: true, color: '#d97706' },
@@ -159,46 +149,20 @@ export function emailFor(name) {
   return `${slug}@kwanza.org`
 }
 
-// ---- Painel Admin ----
-export const adminStats = {
-  participants: 20,
-  active: 14,
-  courses: 6,
-  hoursLogged: 1840,
-  certificates: 47,
-}
-
 export const xpEvolutionMonths = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun']
 export const xpEvolutionValues = [1500, 2050, 2650, 3200, 3900, 4700]
 
 export const attendanceMonthlyValues = [62, 70, 85, 65, 80, 90]
 
 // ---- Frequência ----
-// present/absent/rate são calculados a partir de `checkins` na tela de Frequência,
-// para que os números sempre batam com a lista de participantes.
-export const attendanceSummary = {
-  meetingLabel: 'Encontro semanal · Junho 2026',
-  avgDuration: '3h',
-}
-
+// Todo dia de semana (segunda a sexta) tem aula. O histórico real de presença
+// por dia fica em stores/attendance.js (fonte única de verdade), calculado a
+// partir da lista de participantes.
 export const calendarMonth = {
-  label: 'Junho 2026',
-  totalDays: 30,
-  meetingDays: [2, 4, 9, 11, 16, 18, 23, 25, 30],
+  year: 2026,
+  month: 5, // Junho (0-indexado)
   today: 18,
 }
-
-// Check-in do encontro de hoje. Nome/iniciais/foto vêm da lista de participantes (mesmo id).
-export const checkins = [
-  { id: 1, entrada: '08:00', saida: '11:00', present: true },
-  { id: 2, entrada: '09:07', saida: '12:05', present: true },
-  { id: 3, entrada: '08:14', saida: '11:10', present: true },
-  { id: 4, entrada: '—', saida: '—', present: false },
-  { id: 5, entrada: '08:28', saida: '11:20', present: true },
-  { id: 6, entrada: '09:35', saida: '12:25', present: true },
-  { id: 7, entrada: '08:42', saida: '11:30', present: true },
-  { id: 8, entrada: '—', saida: '—', present: false },
-]
 
 // ---- Competências ----
 export const competencyCategories = [

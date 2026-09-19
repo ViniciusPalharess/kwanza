@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import {
   LayoutDashboard,
-  ShieldCheck,
   Users,
   BookOpen,
   FileText,
@@ -35,7 +34,6 @@ const joinedAtFormatted = computed(() => {
 
 const moreLinks = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin', label: 'Painel Admin', icon: ShieldCheck },
   { to: '/participants', label: 'Pessoas', icon: Users },
   { to: '/courses', label: 'Cursos', icon: BookOpen },
   { to: '/attendance', label: 'Frequência', icon: CalendarCheck },

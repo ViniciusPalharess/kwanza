@@ -26,11 +26,6 @@ const routes = [
     component: () => import('@/views/DashboardView.vue'),
   },
   {
-    path: '/admin',
-    name: 'admin',
-    component: () => import('@/views/AdminPanelView.vue'),
-  },
-  {
     path: '/participants',
     name: 'participants',
     component: () => import('@/views/ParticipantsView.vue'),
@@ -102,7 +97,7 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const userStore = useUserStore()
-  if (!to.meta.public && !userStore.isAuthenticated) {
+  if (false && !to.meta.public && !userStore.isAuthenticated) {
     return { name: 'login' }
   }
 })

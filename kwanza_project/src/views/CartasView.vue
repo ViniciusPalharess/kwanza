@@ -47,7 +47,7 @@ function printLetter() {
     <div v-if="selected" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden max-w-3xl">
       <div class="h-24 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-800 flex items-center justify-between px-6">
         <div>
-          <p class="text-white font-bold text-lg leading-tight">Kenya Club</p>
+          <p class="text-white font-bold text-lg leading-tight">Kenia Club</p>
           <p class="text-brand-100 text-sm">Projeto Kwanza</p>
         </div>
         <FileText class="w-6 h-6 text-white/70" />
@@ -67,7 +67,7 @@ function printLetter() {
         <p class="font-bold text-slate-900 dark:text-white">A quem possa interessar,</p>
 
         <p class="text-slate-700 dark:text-slate-300">
-          É com grande satisfação que o <strong>Kenya Club</strong>, através do <strong>Projeto Kwanza</strong>, recomenda
+          É com grande satisfação que o <strong>Kenia Club</strong>, através do <strong>Projeto Kwanza</strong>, recomenda
           <strong>{{ selected.name }}</strong>, participante exemplar do nosso programa de desenvolvimento juvenil.
         </p>
 
