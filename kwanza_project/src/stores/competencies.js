@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { competencyLogs } from '@/data/mockData'
+import { useParticipantsStore } from '@/stores/participants'
 
 const competencyColors = {
   Liderança: '#2563eb',
@@ -36,6 +37,14 @@ export const useCompetencyStore = defineStore('competencyLogs', {
         color: competencyColors[payload.competency] || '#2563eb',
         ...payload,
       })
+      const points = Number(payload.points) || 0
+      if (points) {
+        const participantsStore = useParticipantsStore()
+        const participant = participantsStore.list.find((p) => p.name === payload.name)
+        if (participant) {
+          participantsStore.update(participant.id, { score: participant.score + points })
+        }
+      }
     },
     update(id, payload) {
       const index = this.logs.findIndex((l) => l.id === id)

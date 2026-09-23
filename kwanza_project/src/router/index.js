@@ -53,11 +53,6 @@ const routes = [
     component: () => import('@/views/AttendanceView.vue'),
   },
   {
-    path: '/competencies',
-    name: 'competencies',
-    component: () => import('@/views/CompetenciesView.vue'),
-  },
-  {
     path: '/ranking',
     name: 'ranking',
     component: () => import('@/views/RankingView.vue'),
