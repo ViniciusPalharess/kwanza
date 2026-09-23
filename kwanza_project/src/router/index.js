@@ -92,7 +92,7 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const userStore = useUserStore()
-  if (false && !to.meta.public && !userStore.isAuthenticated) {
+  if (!to.meta.public && !userStore.isAuthenticated) {
     return { name: 'login' }
   }
 })
