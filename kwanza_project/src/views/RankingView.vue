@@ -46,7 +46,10 @@ const podium = computed(() => ranking.value.slice(0, 3))
 const podiumOrder = computed(() => [podium.value[1], podium.value[0], podium.value[2]])
 const podiumHeights = { 0: 'h-16', 1: 'h-24', 2: 'h-12' }
 const podiumRank = { 0: 2, 1: 1, 2: 3 }
-const restOfRanking = computed(() => ranking.value.slice(3))
+const medals = ['🥇', '🥈', '🥉']
+function positionFor(person) {
+  return ranking.value.indexOf(person) + 1
+}
 
 // ---- Competências por participante (a partir dos registros reais) ----
 function logsFor(name) {
@@ -105,7 +108,6 @@ const highlights = computed(() => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 3)
 })
-const medals = ['🥇', '🥈', '🥉']
 
 // ---- Lista de participantes com busca ----
 const search = ref('')
@@ -208,26 +210,7 @@ function submitRegisterForm() {
           <div class="w-16 rounded-t-lg bg-gradient-to-b from-brand-100 to-brand-50 dark:from-brand-800 dark:to-brand-900 mt-2" :class="podiumHeights[index]" />
         </button>
       </div>
-
-      <ul class="divide-y divide-slate-100 dark:divide-slate-700">
-        <li v-for="(person, index) in restOfRanking" :key="person.id">
-          <button
-            type="button"
-            class="w-full flex items-center gap-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/40 rounded-lg px-2"
-            @click="openParticipant(person)"
-          >
-            <span class="w-6 text-sm font-semibold text-slate-400 dark:text-slate-500">{{ index + 4 }}</span>
-            <div class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
-              {{ person.initials }}
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ person.name }}</p>
-              <p class="text-xs text-slate-500 dark:text-slate-400">{{ levelFor(person.score).name }}</p>
-            </div>
-            <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ person.score }} pts</span>
-          </button>
-        </li>
-      </ul>
+      <p v-else class="text-sm text-slate-400 dark:text-slate-500 text-center py-4">Nenhum participante pontuado ainda.</p>
     </div>
 
     <!-- Pontuação por categoria + Destaques por competência -->
@@ -308,12 +291,15 @@ function submitRegisterForm() {
           </thead>
           <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
             <tr
-              v-for="(person, index) in filteredParticipants"
+              v-for="person in filteredParticipants"
               :key="person.id"
               class="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/40"
               @click="openParticipant(person)"
             >
-              <td class="py-2.5 pr-2 text-slate-400 dark:text-slate-500">{{ ranking.indexOf(person) + 1 }}</td>
+              <td class="py-2.5 pr-2 text-slate-400 dark:text-slate-500">
+                <span v-if="medals[positionFor(person) - 1]">{{ medals[positionFor(person) - 1] }}</span>
+                <span v-else>{{ positionFor(person) }}</span>
+              </td>
               <td class="py-2.5 pr-2">
                 <div class="flex items-center gap-2">
                   <div class="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center text-[11px] font-semibold shrink-0">
@@ -334,10 +320,17 @@ function submitRegisterForm() {
       </div>
     </div>
 
-    <!-- Modal de detalhe do participante -->
+    <!-- Modal de detalhe do participante: ficha de evolução (ranking + competências) -->
     <Modal v-if="selectedParticipant" :title="selectedParticipant.name" max-width="max-w-xl" @close="closeParticipant">
       <div class="space-y-5">
         <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span
+              v-if="medals[positionFor(selectedParticipant) - 1]"
+              class="text-lg leading-none"
+            >{{ medals[positionFor(selectedParticipant) - 1] }}</span>
+            <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">{{ positionFor(selectedParticipant) }}º no ranking</span>
+          </div>
           <div class="flex items-center justify-between mb-1">
             <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">{{ levelFor(selectedParticipant.score).name }}</p>
             <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ selectedParticipant.score }} pontos</p>
