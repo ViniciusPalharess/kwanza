@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
-import { Crown, Search, Plus, TrendingUp } from 'lucide-vue-next'
+import { Crown, Search, Plus, TrendingUp, MoreVertical, BarChart2, Star } from 'lucide-vue-next'
 import { competencyCategories } from '@/data/mockData'
 import { useParticipantsStore } from '@/stores/participants'
 import { useCompetencyStore } from '@/stores/competencies'
@@ -16,6 +16,13 @@ const competencyNames = competencyCategories.map((c) => c.name)
 // Período de avaliação: contexto único da tela. Ainda não há dados
 // segmentados por período no sistema, então por ora existe uma única opção.
 const period = ref('2026 — 1º Semestre')
+
+// ---- Visões gerais (agregadas de todos os participantes): ficam fora do
+// fluxo principal da tela, acessíveis pelo menu de opções, para manter o
+// foco da tela no ranking único de participantes. ----
+const showMenu = ref(false)
+const showCategoryOverview = ref(false)
+const showHighlightsOverview = ref(false)
 
 // ---- Nível de evolução: usa exclusivamente os limiares já cadastrados
 // em Configurações (settingsStore.levels), sem inventar novas regras. ----
@@ -172,12 +179,45 @@ function submitRegisterForm() {
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Competências e Ranking</h1>
         <p class="text-sm text-slate-500 dark:text-slate-400">A jornada de evolução dos participantes do Projeto Kwanza</p>
       </div>
-      <select
-        v-model="period"
-        class="text-sm font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg px-3 py-2"
-      >
-        <option>{{ period }}</option>
-      </select>
+      <div class="flex items-center gap-2">
+        <select
+          v-model="period"
+          class="text-sm font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg px-3 py-2"
+        >
+          <option>{{ period }}</option>
+        </select>
+
+        <div class="relative">
+          <button
+            type="button"
+            class="flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+            title="Visões gerais do período"
+            @click="showMenu = !showMenu"
+          >
+            <MoreVertical class="w-5 h-5" />
+          </button>
+
+          <template v-if="showMenu">
+            <div class="fixed inset-0 z-10" @click="showMenu = false" />
+            <div class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-lg z-20 py-1.5">
+              <button
+                type="button"
+                class="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 text-left"
+                @click="showCategoryOverview = true; showMenu = false"
+              >
+                <BarChart2 class="w-4 h-4" /> Pontuação por categoria (geral)
+              </button>
+              <button
+                type="button"
+                class="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 text-left"
+                @click="showHighlightsOverview = true; showMenu = false"
+              >
+                <Star class="w-4 h-4" /> Destaques por competência
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
 
     <!-- Ranking: destaque visual principal -->
@@ -211,46 +251,6 @@ function submitRegisterForm() {
         </button>
       </div>
       <p v-else class="text-sm text-slate-400 dark:text-slate-500 text-center py-4">Nenhum participante pontuado ainda.</p>
-    </div>
-
-    <!-- Pontuação por categoria + Destaques por competência -->
-    <div class="grid lg:grid-cols-2 gap-4">
-      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
-        <h2 class="font-bold text-lg text-slate-900 dark:text-white">Pontuação por categoria</h2>
-        <p class="text-xs text-slate-400 dark:text-slate-500 mb-4">Soma dos registros de todos os participantes no período</p>
-        <div class="space-y-3">
-          <div v-for="cat in globalPointsByCategory" :key="cat.competency">
-            <div class="flex items-center justify-between text-sm mb-1">
-              <span class="font-medium text-slate-700 dark:text-slate-200">{{ cat.competency }}</span>
-              <span class="font-semibold text-slate-500 dark:text-slate-400">{{ cat.points }} pts</span>
-            </div>
-            <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-              <div class="h-full bg-brand-600 rounded-full" :style="{ width: cat.pct + '%' }" />
-            </div>
-          </div>
-          <p v-if="!globalPointsByCategory.length" class="text-sm text-slate-400 dark:text-slate-500">Nenhum registro de competência ainda.</p>
-        </div>
-      </div>
-
-      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
-        <div class="flex items-center justify-between gap-3 mb-4">
-          <h2 class="font-bold text-lg text-slate-900 dark:text-white">Destaques por competência</h2>
-          <select
-            v-model="highlightCompetency"
-            class="text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-2 py-1.5"
-          >
-            <option v-for="name in competencyNames" :key="name" :value="name">{{ name }}</option>
-          </select>
-        </div>
-        <ul class="space-y-2">
-          <li v-for="(item, index) in highlights" :key="item.name" class="flex items-center gap-2 text-sm">
-            <span>{{ medals[index] }}</span>
-            <span class="flex-1 font-medium text-slate-700 dark:text-slate-200">{{ item.name }}</span>
-            <span class="text-slate-500 dark:text-slate-400">{{ item.count }} registro{{ item.count === 1 ? '' : 's' }}</span>
-          </li>
-          <li v-if="!highlights.length" class="text-sm text-slate-400 dark:text-slate-500">Nenhum registro para esta competência ainda.</li>
-        </ul>
-      </div>
     </div>
 
     <!-- Participantes -->
@@ -406,6 +406,41 @@ function submitRegisterForm() {
           </ul>
         </div>
       </div>
+    </Modal>
+
+    <!-- Visão geral: Pontuação por categoria (todos os participantes) -->
+    <Modal v-if="showCategoryOverview" title="Pontuação por categoria" @close="showCategoryOverview = false">
+      <p class="text-xs text-slate-400 dark:text-slate-500 -mt-2 mb-4">Soma dos registros de todos os participantes no período · {{ period }}</p>
+      <div class="space-y-3">
+        <div v-for="cat in globalPointsByCategory" :key="cat.competency">
+          <div class="flex items-center justify-between text-sm mb-1">
+            <span class="font-medium text-slate-700 dark:text-slate-200">{{ cat.competency }}</span>
+            <span class="font-semibold text-slate-500 dark:text-slate-400">{{ cat.points }} pts</span>
+          </div>
+          <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
+            <div class="h-full bg-brand-600 rounded-full" :style="{ width: cat.pct + '%' }" />
+          </div>
+        </div>
+        <p v-if="!globalPointsByCategory.length" class="text-sm text-slate-400 dark:text-slate-500">Nenhum registro de competência ainda.</p>
+      </div>
+    </Modal>
+
+    <!-- Visão geral: Destaques por competência (todos os participantes) -->
+    <Modal v-if="showHighlightsOverview" title="Destaques por competência" @close="showHighlightsOverview = false">
+      <select
+        v-model="highlightCompetency"
+        class="w-full text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 mb-4"
+      >
+        <option v-for="name in competencyNames" :key="name" :value="name">{{ name }}</option>
+      </select>
+      <ul class="space-y-2">
+        <li v-for="(item, index) in highlights" :key="item.name" class="flex items-center gap-2 text-sm">
+          <span>{{ medals[index] }}</span>
+          <span class="flex-1 font-medium text-slate-700 dark:text-slate-200">{{ item.name }}</span>
+          <span class="text-slate-500 dark:text-slate-400">{{ item.count }} registro{{ item.count === 1 ? '' : 's' }}</span>
+        </li>
+        <li v-if="!highlights.length" class="text-sm text-slate-400 dark:text-slate-500">Nenhum registro para esta competência ainda.</li>
+      </ul>
     </Modal>
 
     <!-- Registrar competência -->
