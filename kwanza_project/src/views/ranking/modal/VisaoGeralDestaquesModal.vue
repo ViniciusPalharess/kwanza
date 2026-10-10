@@ -1,17 +1,12 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5"
-  >
-    <div class="flex items-center justify-between gap-3 mb-4">
-      <h2 class="font-bold text-lg text-slate-900 dark:text-white">Destaques por competência</h2>
-      <select
-        :value="highlightCompetency"
-        class="text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-2 py-1.5"
-        @change="$emit('selecionarCompetencia', ($event.target as HTMLSelectElement).value)"
-      >
-        <option v-for="name in competencyNames" :key="name" :value="name">{{ name }}</option>
-      </select>
-    </div>
+  <Modal title="Destaques por competência" @close="$emit('fechar')">
+    <select
+      :value="highlightCompetency"
+      class="w-full text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 mb-4"
+      @change="$emit('selecionarCompetencia', ($event.target as HTMLSelectElement).value)"
+    >
+      <option v-for="name in competencyNames" :key="name" :value="name">{{ name }}</option>
+    </select>
     <ul class="space-y-2">
       <li
         v-for="(item, index) in highlights"
@@ -28,16 +23,18 @@
         Nenhum registro para esta competência ainda.
       </li>
     </ul>
-  </div>
+  </Modal>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Modal from '@/components/modal/Modal.vue'
 
 @Component({
-  emits: ['selecionarCompetencia'],
+  components: { Modal },
+  emits: ['fechar', 'selecionarCompetencia'],
 })
-export default class DestaquesCompetenciaView extends Vue {
+export default class VisaoGeralDestaquesModal extends Vue {
   // public
   @Prop({ type: Array, required: true })
   public competencyNames!: string[]

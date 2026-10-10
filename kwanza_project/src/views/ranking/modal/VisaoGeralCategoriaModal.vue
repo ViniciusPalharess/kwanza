@@ -1,10 +1,7 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5"
-  >
-    <h2 class="font-bold text-lg text-slate-900 dark:text-white">Pontuação por categoria</h2>
-    <p class="text-xs text-slate-400 dark:text-slate-500 mb-4">
-      Soma dos registros de todos os participantes no período
+  <Modal title="Pontuação por categoria" @close="$emit('fechar')">
+    <p class="text-xs text-slate-400 dark:text-slate-500 -mt-2 mb-4">
+      Soma dos registros de todos os participantes no período · {{ period }}
     </p>
     <div class="space-y-3">
       <div v-for="cat in categorias" :key="cat.competency">
@@ -20,14 +17,21 @@
         Nenhum registro de competência ainda.
       </p>
     </div>
-  </div>
+  </Modal>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Modal from '@/components/modal/Modal.vue'
 
-@Component({})
-export default class PontuacaoCategoriaView extends Vue {
+@Component({
+  components: { Modal },
+  emits: ['fechar'],
+})
+export default class VisaoGeralCategoriaModal extends Vue {
+  // public
+  @Prop({ type: String, required: true })
+  public period!: string
   // public
   @Prop({ type: Array, required: true })
   public categorias!: Array<{ competency: string; points: number; pct: number }>

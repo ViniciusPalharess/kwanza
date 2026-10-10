@@ -39,36 +39,9 @@
         />
       </button>
     </div>
-
-    <ul class="divide-y divide-slate-100 dark:divide-slate-700">
-      <li v-for="(person, index) in restOfRanking" :key="person.id">
-        <button
-          type="button"
-          class="w-full flex items-center gap-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/40 rounded-lg px-2"
-          @click="$emit('selecionarParticipante', person)"
-        >
-          <span class="w-6 text-sm font-semibold text-slate-400 dark:text-slate-500">{{
-            index + 4
-          }}</span>
-          <div
-            class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-semibold shrink-0"
-          >
-            {{ person.initials }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
-              {{ person.name }}
-            </p>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              {{ levelFor(person.score).name }}
-            </p>
-          </div>
-          <span class="text-sm font-bold text-slate-800 dark:text-slate-100"
-            >{{ person.score }} pts</span
-          >
-        </button>
-      </li>
-    </ul>
+    <p v-else class="text-sm text-slate-400 dark:text-slate-500 text-center py-4">
+      Nenhum participante pontuado ainda.
+    </p>
   </div>
 </template>
 
@@ -93,9 +66,6 @@ export default class PodioRankingView extends Vue {
   // public
   @Prop({ type: Object, required: true })
   public podiumRank!: Record<number, number>
-  // public
-  @Prop({ type: Array, required: true })
-  public restOfRanking!: any[]
   // public
   @Prop({ type: Function, required: true })
   public levelFor!: (score: number) => { name: string; xp: number }

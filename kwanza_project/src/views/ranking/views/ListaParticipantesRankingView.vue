@@ -45,7 +45,8 @@
             @click="$emit('selecionarParticipante', person)"
           >
             <td class="py-2.5 pr-2 text-slate-400 dark:text-slate-500">
-              {{ ranking.indexOf(person) + 1 }}
+              <span v-if="medals[positionFor(person) - 1]">{{ medals[positionFor(person) - 1] }}</span>
+              <span v-else>{{ positionFor(person) }}</span>
             </td>
             <td class="py-2.5 pr-2">
               <div class="flex items-center gap-2">
@@ -95,6 +96,9 @@ export default class ListaParticipantesRankingView extends Vue {
   // public
   @Prop({ type: Array, required: true })
   public ranking!: any[]
+  // public
+  @Prop({ type: Array, required: true })
+  public medals!: string[]
   // public
   @Prop({ type: Boolean, required: true })
   public canEditScore!: boolean
