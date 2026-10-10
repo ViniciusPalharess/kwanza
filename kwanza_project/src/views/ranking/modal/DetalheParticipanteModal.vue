@@ -1,121 +1,88 @@
 <template>
-  <Modal :title="participant.name" max-width="max-w-xl" @close="$emit('fechar')">
-    <div class="space-y-5">
+  <modal :title="participant.name" max-width="36rem" @close="$emit('fechar')">
+    <div class="sections">
       <div>
-        <div class="flex items-center justify-between mb-1">
-          <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">
-            {{ levelFor(participant.score).name }}
-          </p>
-          <p class="text-sm font-bold text-slate-800 dark:text-slate-100">
-            {{ participant.score }} pontos
-          </p>
+        <div class="rank-row">
+          <span v-if="medal" class="medal">{{ medal }}</span>
+          <span class="rank-label">{{ position }}º no ranking</span>
         </div>
-        <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-          <div
-            class="h-full bg-brand-600 rounded-full"
-            :style="{ width: levelProgress(participant.score) + '%' }"
-          />
+        <div class="level-row">
+          <p class="level-name">{{ levelFor(participant.score).name }}</p>
+          <p class="score">{{ participant.score }} pontos</p>
         </div>
-        <p
-          v-if="nextLevelFor(participant.score)"
-          class="text-xs text-slate-400 dark:text-slate-500 mt-1"
-        >
+        <div class="track">
+          <div class="fill" :style="{ width: levelProgress(participant.score) + '%' }" />
+        </div>
+        <p v-if="nextLevelFor(participant.score)" class="progress-text">
           {{ participant.score }} / {{ nextLevelFor(participant.score).xp }} pts para
           {{ nextLevelFor(participant.score).name }}
         </p>
-        <p v-else class="text-xs text-slate-400 dark:text-slate-500 mt-1">Nível máximo alcançado</p>
+        <p v-else class="progress-text">Nível máximo alcançado</p>
       </div>
 
-      <hr class="border-slate-100 dark:border-slate-700" />
+      <hr class="divider" />
 
       <div>
-        <p class="text-sm font-bold text-slate-900 dark:text-white mb-2">Competências</p>
-        <ul class="space-y-1.5">
-          <li
-            v-for="c in competencyCountsFor(participant.name)"
-            :key="c.competency"
-            class="flex items-center justify-between text-sm"
-          >
-            <span class="text-slate-600 dark:text-slate-300">{{ c.competency }}</span>
-            <span class="font-semibold text-slate-800 dark:text-slate-100">{{ c.count }}</span>
+        <p class="section-title">Competências</p>
+        <ul class="list">
+          <li v-for="c in competencyCountsFor(participant.name)" :key="c.competency" class="row">
+            <span class="row-label">{{ c.competency }}</span>
+            <span class="row-value">{{ c.count }}</span>
           </li>
-          <li
-            v-if="!competencyCountsFor(participant.name).length"
-            class="text-sm text-slate-400 dark:text-slate-500"
-          >
+          <li v-if="!competencyCountsFor(participant.name).length" class="empty-text">
             Nenhum registro ainda.
           </li>
         </ul>
       </div>
 
-      <hr class="border-slate-100 dark:border-slate-700" />
+      <hr class="divider" />
 
       <div>
-        <p class="text-sm font-bold text-slate-900 dark:text-white mb-2">Pontuação por categoria</p>
-        <ul class="space-y-1.5">
-          <li
-            v-for="c in pointsByCategoryFor(participant.name)"
-            :key="c.competency"
-            class="flex items-center justify-between text-sm"
-          >
-            <span class="text-slate-600 dark:text-slate-300">{{ c.competency }}</span>
-            <span class="font-semibold text-slate-800 dark:text-slate-100">{{ c.points }} pts</span>
+        <p class="section-title">Pontuação por categoria</p>
+        <ul class="list">
+          <li v-for="c in pointsByCategoryFor(participant.name)" :key="c.competency" class="row">
+            <span class="row-label">{{ c.competency }}</span>
+            <span class="row-value">{{ c.points }} pts</span>
           </li>
-          <li
-            v-if="!pointsByCategoryFor(participant.name).length"
-            class="text-sm text-slate-400 dark:text-slate-500"
-          >
+          <li v-if="!pointsByCategoryFor(participant.name).length" class="empty-text">
             Nenhum registro ainda.
           </li>
         </ul>
       </div>
 
-      <hr class="border-slate-100 dark:border-slate-700" />
+      <hr class="divider" />
 
-      <div v-if="!showHistory" class="flex justify-center gap-2">
+      <div v-if="!showHistory" class="footer-actions">
         <button
           v-if="canEditScore"
           type="button"
-          class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 text-sm font-semibold text-slate-600 dark:text-slate-300"
+          class="button-secondary"
           @click="$emit('registrarCompetencia', participant)"
         >
           + Registrar competência
         </button>
-        <button
-          type="button"
-          class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold"
-          @click="showHistory = true"
-        >
+        <button type="button" class="button-primary" @click="showHistory = true">
           Ver histórico
         </button>
       </div>
 
       <div v-else>
-        <p class="text-sm font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-1.5">
-          <TrendingUp class="w-4 h-4 text-brand-600" /> Histórico
-        </p>
-        <ul class="divide-y divide-slate-100 dark:divide-slate-700 max-h-64 overflow-y-auto">
-          <li v-for="log in history" :key="log.id" class="py-2.5">
-            <div class="flex items-center gap-2">
-              <span
-                class="text-xs font-semibold text-slate-400 dark:text-slate-500 w-14 shrink-0"
-                >{{ log.date }}</span
-              >
-              <span class="text-sm font-semibold" :style="{ color: log.color }">{{
+        <p class="section-title history-title"><trending-up class="history-icon" /> Histórico</p>
+        <ul class="history-list">
+          <li v-for="log in history" :key="log.id" class="history-row">
+            <div class="history-head">
+              <span class="history-date">{{ log.date }}</span>
+              <span class="history-competency" :style="{ color: log.color }">{{
                 log.competency
               }}</span>
             </div>
-            <p class="text-sm text-slate-600 dark:text-slate-300 mt-0.5 pl-16">
-              {{ log.description }}
-            </p>
+            <p class="history-description">{{ log.description }}</p>
           </li>
-          <li v-if="!history.length" class="py-4 text-sm text-slate-400 dark:text-slate-500">
-            Nenhum registro ainda.
-          </li>
+          <li v-if="!history.length" class="empty-text">Nenhum registro ainda.</li>
         </ul>
       </div>
     </div>
-  </Modal>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -131,6 +98,12 @@ export default class DetalheParticipanteModal extends Vue {
   // public
   @Prop({ type: Object, required: true })
   public participant!: any
+  // public
+  @Prop({ type: Number, required: true })
+  public position!: number
+  // public
+  @Prop({ type: String, default: null })
+  public medal!: string | null
   // public
   @Prop({ type: Array, required: true })
   public history!: any[]
@@ -158,4 +131,184 @@ export default class DetalheParticipanteModal extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.medal {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.rank-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.level-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.score {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--surface-muted);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--accent);
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin-top: 0.25rem;
+}
+
+.divider {
+  border-color: var(--border-subtle);
+}
+
+.section-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.history-title {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.history-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--accent);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.row-label {
+  color: var(--text-secondary);
+}
+
+.row-value {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.empty-text {
+  font-size: 0.875rem;
+  color: var(--text-faint);
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.button-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.button-primary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.button-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.history-row {
+  padding: 0.625rem 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.history-row:first-child {
+  border-top: none;
+}
+
+.history-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.history-date {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  width: 3.5rem;
+  flex-shrink: 0;
+}
+
+.history-competency {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.history-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 0.125rem;
+  padding-left: 4rem;
+}
+</style>

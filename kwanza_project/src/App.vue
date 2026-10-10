@@ -1,11 +1,11 @@
 <template>
-  <Toast />
-  <div v-if="isPublic" class="min-h-screen">
+  <toast />
+  <div v-if="isPublic" class="public-shell">
     <router-view />
   </div>
-  <div v-else class="h-screen bg-slate-50 dark:bg-slate-900 flex flex-col overflow-hidden">
-    <NavegacaoTopo />
-    <main class="flex-1 overflow-y-auto p-4 sm:p-6">
+  <div v-else class="app-shell">
+    <navegacao-topo />
+    <main class="app-content">
       <router-view />
     </main>
   </div>
@@ -27,4 +27,27 @@ export default class App extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.public-shell {
+  min-height: 100vh;
+}
+
+.app-shell {
+  height: 100vh;
+  background-color: var(--surface-sunken);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+  .app-content {
+    padding: 1.5rem;
+  }
+}
+</style>

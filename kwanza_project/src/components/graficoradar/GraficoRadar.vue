@@ -1,11 +1,11 @@
 <template>
-  <svg :viewBox="`0 0 ${size} ${size}`" class="w-full max-w-[260px] mx-auto">
+  <svg :viewBox="`0 0 ${size} ${size}`" class="chart">
     <polygon
       v-for="lvl in gridLevels"
       :key="lvl"
       :points="gridPolygon(lvl)"
       fill="none"
-      class="stroke-slate-200 dark:stroke-slate-700"
+      class="grid-line"
       stroke-width="1"
     />
     <line
@@ -15,7 +15,7 @@
       :y1="center"
       :x2="pointFor(i, maxValue)[0]"
       :y2="pointFor(i, maxValue)[1]"
-      class="stroke-slate-200 dark:stroke-slate-700"
+      class="grid-line"
       stroke-width="1"
     />
     <polygon
@@ -32,7 +32,7 @@
       :y="labelPointFor(i)[1]"
       text-anchor="middle"
       font-size="9"
-      class="fill-slate-500 dark:fill-slate-400"
+      class="axis-label"
     >
       {{ a.label }}
     </text>
@@ -95,4 +95,19 @@ export default class GraficoRadar extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.chart {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+  display: block;
+}
+
+.grid-line {
+  stroke: var(--chart-grid);
+}
+
+.axis-label {
+  fill: var(--text-muted);
+}
+</style>

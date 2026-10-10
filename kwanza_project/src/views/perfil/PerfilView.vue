@@ -1,34 +1,28 @@
 <template>
-  <div class="max-w-3xl space-y-6">
-    <div class="text-center">
-      <img
-        :src="user.avatarUrl || defaultAvatar"
-        alt="Foto de perfil"
-        class="w-20 h-20 rounded-full object-cover mx-auto mb-3"
-      />
-      <h1 class="text-xl font-bold text-slate-900 dark:text-white">{{ user.name }}</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400">
+  <div class="page">
+    <div class="header">
+      <img :src="user.avatarUrl || defaultAvatar" alt="Foto de perfil" class="avatar" />
+      <h1 class="name">{{ user.name }}</h1>
+      <p class="meta">
         Nível {{ user.level }} · {{ user.levelName }} · {{ user.streakDays }} dias · #{{
           user.rankPosition
         }}
       </p>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <CartaoEstatistica label="Pontuação" :value="user.score" />
-      <CartaoEstatistica label="Horas" :value="`${user.hours}h`" />
-      <CartaoEstatistica label="Frequência" :value="`${user.attendance}%`" />
-      <CartaoEstatistica label="Medalhas" :value="unlockedMedalsCount" />
+    <div class="stats-grid">
+      <cartao-estatistica label="Pontuação" :value="user.score" />
+      <cartao-estatistica label="Horas" :value="`${user.hours}h`" />
+      <cartao-estatistica label="Frequência" :value="`${user.attendance}%`" />
+      <cartao-estatistica label="Medalhas" :value="unlockedMedalsCount" />
     </div>
 
-    <FormularioEdicaoPerfilView :form="form" @salvar="handleSave" />
+    <formulario-edicao-perfil-view :form="form" @salvar="handleSave" />
 
-    <div
-      class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-    >
-      <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">Competências</h2>
-      <div class="space-y-3">
-        <BarraCompetencia
+    <div class="card">
+      <h2 class="card-title">Competências</h2>
+      <div class="skills-list">
+        <barra-competencia
           v-for="skill in skills"
           :key="skill.id"
           :name="skill.name"
@@ -37,56 +31,39 @@
       </div>
     </div>
 
-    <div
-      class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-    >
-      <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">Medalhas</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div class="card">
+      <h2 class="card-title">Medalhas</h2>
+      <div class="medals-grid">
         <div
           v-for="medal in medals"
           :key="medal.id"
-          class="flex flex-col items-center gap-2 rounded-xl p-3 border"
-          :class="
-            medal.unlocked
-              ? 'border-slate-100 dark:border-slate-700'
-              : 'border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900'
-          "
+          class="medal-card"
+          :class="{ 'medal-card--locked': !medal.unlocked }"
         >
           <div
-            class="w-12 h-12 rounded-full flex items-center justify-center text-white"
+            class="medal-icon"
+            :class="{ 'medal-icon--locked': !medal.unlocked }"
             :style="medal.unlocked ? { backgroundColor: medal.color } : {}"
-            :class="
-              !medal.unlocked && 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500'
-            "
           >
-            <Award class="w-5 h-5" />
+            <award class="medal-icon-glyph" />
           </div>
-          <span
-            class="text-xs text-center font-medium"
-            :class="
-              medal.unlocked
-                ? 'text-slate-700 dark:text-slate-200'
-                : 'text-slate-400 dark:text-slate-500'
-            "
-          >
+          <span class="medal-name" :class="{ 'medal-name--locked': !medal.unlocked }">
             {{ medal.name }}
           </span>
         </div>
       </div>
     </div>
 
-    <div
-      class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-    >
-      <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">Atividades recentes</h2>
-      <ul class="divide-y divide-slate-100 dark:divide-slate-700">
+    <div class="card">
+      <h2 class="card-title">Atividades recentes</h2>
+      <ul class="activity-list">
         <li
           v-for="activity in recentActivities.slice(0, 4)"
           :key="activity.id"
-          class="py-2.5 flex justify-between text-sm"
+          class="activity-row"
         >
-          <span class="text-slate-700 dark:text-slate-200">{{ activity.text }}</span>
-          <span class="text-slate-400 text-xs whitespace-nowrap ml-2">{{ activity.time }}</span>
+          <span class="activity-text">{{ activity.text }}</span>
+          <span class="activity-time">{{ activity.time }}</span>
         </li>
       </ul>
     </div>
@@ -145,4 +122,149 @@ export default class PerfilView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  max-width: 48rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  text-align: center;
+}
+
+.avatar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin: 0 auto 0.75rem;
+}
+
+.name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.meta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.medals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .medals-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.medal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-subtle);
+}
+
+.medal-card--locked {
+  background-color: var(--surface-sunken);
+}
+
+.medal-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.medal-icon--locked {
+  background-color: var(--surface-muted);
+  color: var(--text-faint);
+}
+
+.medal-icon-glyph {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.medal-name {
+  font-size: 0.75rem;
+  text-align: center;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.medal-name--locked {
+  color: var(--text-faint);
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.activity-row:first-child {
+  border-top: none;
+}
+
+.activity-text {
+  color: var(--text-secondary);
+}
+
+.activity-time {
+  color: var(--text-faint);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+</style>

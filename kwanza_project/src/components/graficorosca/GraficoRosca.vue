@@ -1,11 +1,11 @@
 <template>
-  <div class="flex flex-col items-center gap-4">
-    <div class="relative w-[170px] h-[170px] rounded-full" :style="{ background: gradient }">
-      <div v-if="donut" class="absolute inset-0 m-auto w-[84px] h-[84px] rounded-full bg-white" />
+  <div class="wrapper">
+    <div class="ring" :style="{ background: gradient }">
+      <div v-if="donut" class="hole" />
     </div>
-    <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-slate-500">
-      <span v-for="s in segments" :key="s.label" class="flex items-center gap-1.5">
-        <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: s.color }" />
+    <div class="legend">
+      <span v-for="s in segments" :key="s.label" class="legend-item">
+        <span class="legend-dot" :style="{ backgroundColor: s.color }" />
         {{ s.label }}
       </span>
     </div>
@@ -43,4 +43,51 @@ export default class GraficoRosca extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ring {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  border-radius: 9999px;
+}
+
+.hole {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 84px;
+  height: 84px;
+  border-radius: 9999px;
+  background-color: #fff;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 1rem;
+  row-gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-slate-500);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.legend-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+}
+</style>

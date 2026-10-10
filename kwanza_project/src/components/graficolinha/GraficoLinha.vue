@@ -1,6 +1,6 @@
 <template>
   <div>
-    <svg :viewBox="`0 0 ${width} ${height}`" class="w-full h-auto">
+    <svg :viewBox="`0 0 ${width} ${height}`" class="chart">
       <line
         v-for="line in gridLines"
         :key="line.value"
@@ -8,7 +8,7 @@
         :x2="width - padding.right"
         :y1="line.y"
         :y2="line.y"
-        class="stroke-slate-200 dark:stroke-slate-700"
+        class="grid-line"
         stroke-width="1"
       />
       <text
@@ -18,7 +18,7 @@
         :y="line.y + 3"
         text-anchor="end"
         font-size="9"
-        class="fill-slate-400 dark:fill-slate-500"
+        class="axis-label"
       >
         {{ line.value }}
       </text>
@@ -48,15 +48,15 @@
         :y="height - 6"
         text-anchor="middle"
         font-size="9"
-        class="fill-slate-400 dark:fill-slate-500"
+        class="axis-label"
       >
         {{ label }}
       </text>
     </svg>
 
-    <div v-if="series.length > 1" class="flex items-center gap-4 mt-2 text-xs text-slate-500">
-      <span v-for="s in series" :key="'legend-' + s.name" class="flex items-center gap-1.5">
-        <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: s.color }" />
+    <div v-if="series.length > 1" class="legend">
+      <span v-for="s in series" :key="'legend-' + s.name" class="legend-item">
+        <span class="legend-dot" :style="{ backgroundColor: s.color }" />
         {{ s.name }}
       </span>
     </div>
@@ -144,4 +144,38 @@ export default class GraficoLinha extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.chart {
+  width: 100%;
+  height: auto;
+}
+
+.grid-line {
+  stroke: var(--chart-grid);
+}
+
+.axis-label {
+  fill: var(--text-faint);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-slate-500);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.legend-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+}
+</style>

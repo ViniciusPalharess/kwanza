@@ -1,23 +1,21 @@
 <template>
-  <div class="space-y-6">
+  <div class="page">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Configurações</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400">
-        Gestão da instituição e da plataforma
-      </p>
+      <h1 class="title">Configurações</h1>
+      <p class="subtitle">Gestão da instituição e da plataforma</p>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-6">
-      <DadosInstituicaoView :institution="store.institution" />
+    <div class="grid-two">
+      <dados-instituicao-view :institution="store.institution" />
 
-      <NiveisPontuacaoView
+      <niveis-pontuacao-view
         :levels="store.levels"
         @criar="openCreateLevel"
         @editar="openEditLevel"
         @excluir="askDeleteLevel"
       />
 
-      <UsuariosPermissoesView
+      <usuarios-permissoes-view
         :users="store.users"
         :role-colors="roleColors"
         @criar="openCreateUser"
@@ -25,18 +23,18 @@
         @excluir="askDeleteUser"
       />
 
-      <AparenciaView :dark="themeStore.dark" @alternar="themeStore.toggle()" />
+      <aparencia-view :dark="themeStore.dark" @alternar="themeStore.toggle()" />
 
-      <PermissoesCategoriasView
+      <permissoes-categorias-view
         :permission-keys="permissionKeys"
         :permission-labels="permissionLabels"
         :permissions="store.permissions"
       />
 
-      <BackupSegurancaView :last-backup="store.lastBackup" @fazer-backup="store.runBackup()" />
+      <backup-seguranca-view :last-backup="store.lastBackup" @fazer-backup="store.runBackup()" />
     </div>
 
-    <FormularioNivelModal
+    <formulario-nivel-modal
       v-if="showLevelForm"
       :editing-level-id="editingLevelId"
       :form="levelForm"
@@ -44,7 +42,7 @@
       @salvar="submitLevel"
     />
 
-    <FormularioUsuarioModal
+    <formulario-usuario-modal
       v-if="showUserForm"
       :editing-user-id="editingUserId"
       :form="userForm"
@@ -53,13 +51,13 @@
       @salvar="submitUser"
     />
 
-    <DialogoConfirmacao
+    <dialogo-confirmacao
       v-if="confirmDeleteLevelId"
       message="Tem certeza que deseja excluir este nível?"
       @confirm="confirmDeleteLevel"
       @cancel="confirmDeleteLevelId = null"
     />
-    <DialogoConfirmacao
+    <dialogo-confirmacao
       v-if="confirmDeleteUserId"
       message="Tem certeza que deseja remover este usuário?"
       @confirm="confirmDeleteUser"
@@ -108,10 +106,10 @@ export default class ConfiguracoesView extends Vue {
   public roleOptions = ['Administrador', 'Coordenador', 'Professor', 'Monitor']
   // public
   public roleColors: Record<string, string> = {
-    Administrador: 'bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300',
-    Coordenador: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600',
-    Professor: 'bg-amber-50 dark:bg-amber-500/10 text-amber-600',
-    Monitor: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300',
+    Administrador: 'brand',
+    Coordenador: 'emerald',
+    Professor: 'amber',
+    Monitor: 'slate',
   }
   // public
   public permissionKeys = [
@@ -214,4 +212,32 @@ export default class ConfiguracoesView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 1024px) {
+  .grid-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>

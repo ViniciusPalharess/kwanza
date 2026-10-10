@@ -1,45 +1,53 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div class="page">
+    <div class="header">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Competências e Ranking</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          A jornada de evolução dos participantes do Projeto Kwanza
-        </p>
+        <h1 class="title">Competências e Ranking</h1>
+        <p class="subtitle">A jornada de evolução dos participantes do Projeto Kwanza</p>
       </div>
-      <select
-        v-model="period"
-        class="text-sm font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg px-3 py-2"
-      >
-        <option>{{ period }}</option>
-      </select>
+      <div class="controls">
+        <select v-model="period" class="period-select">
+          <option>{{ period }}</option>
+        </select>
+
+        <div class="menu-wrapper">
+          <button
+            type="button"
+            class="menu-button"
+            title="Visões gerais do período"
+            @click="showMenu = !showMenu"
+          >
+            <more-vertical class="menu-icon" />
+          </button>
+
+          <template v-if="showMenu">
+            <div class="backdrop" @click="showMenu = false" />
+            <div class="menu">
+              <button type="button" class="menu-item" @click="openCategoryOverview">
+                <bar-chart2 class="menu-item-icon" /> Pontuação por categoria (geral)
+              </button>
+              <button type="button" class="menu-item" @click="openHighlightsOverview">
+                <star class="menu-item-icon" /> Destaques por competência
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
 
-    <PodioRankingView
+    <podio-ranking-view
       :podium="podium"
       :podium-order="podiumOrder"
       :podium-heights="podiumHeights"
       :podium-rank="podiumRank"
-      :rest-of-ranking="restOfRanking"
       :level-for="levelFor"
       @selecionar-participante="openParticipant"
     />
 
-    <div class="grid lg:grid-cols-2 gap-4">
-      <PontuacaoCategoriaView :categorias="globalPointsByCategory" />
-
-      <DestaquesCompetenciaView
-        :competency-names="competencyNames"
-        :highlight-competency="highlightCompetency"
-        :highlights="highlights"
-        :medals="medals"
-        @selecionar-competencia="highlightCompetency = $event"
-      />
-    </div>
-
-    <ListaParticipantesRankingView
+    <lista-participantes-ranking-view
       :participantes="filteredParticipants"
       :ranking="ranking"
+      :medals="medals"
       :can-edit-score="canEditScore"
       :search="search"
       :level-for="levelFor"
@@ -49,9 +57,11 @@
       @registrar-competencia="openRegisterForm"
     />
 
-    <DetalheParticipanteModal
+    <detalhe-participante-modal
       v-if="selectedParticipant"
       :participant="selectedParticipant"
+      :position="positionFor(selectedParticipant)"
+      :medal="medals[positionFor(selectedParticipant) - 1] || null"
       :history="participantHistory"
       :can-edit-score="canEditScore"
       :level-for="levelFor"
@@ -63,7 +73,24 @@
       @registrar-competencia="openRegisterForm"
     />
 
-    <RegistrarCompetenciaModal
+    <visao-geral-categoria-modal
+      v-if="showCategoryOverview"
+      :period="period"
+      :categorias="globalPointsByCategory"
+      @fechar="showCategoryOverview = false"
+    />
+
+    <visao-geral-destaques-modal
+      v-if="showHighlightsOverview"
+      :competency-names="competencyNames"
+      :highlight-competency="highlightCompetency"
+      :highlights="highlights"
+      :medals="medals"
+      @fechar="showHighlightsOverview = false"
+      @selecionar-competencia="highlightCompetency = $event"
+    />
+
+    <registrar-competencia-modal
       v-if="showRegisterForm"
       :form="form"
       :competency-names="competencyNames"
@@ -75,17 +102,18 @@
 </template>
 
 <script lang="ts">
+import { MoreVertical, BarChart2, Star } from 'lucide-vue-next'
 import { Component, Vue } from 'vue-facing-decorator'
 import { competencyCategories } from '@/data/dadosSimulados'
 import { usePessoasStore } from '@/stores/pessoas'
 import { useCompetenciasStore } from '@/stores/competencias'
 import { useConfiguracoesStore } from '@/stores/configuracoes'
 import PodioRankingView from '@/views/ranking/views/PodioRankingView.vue'
-import PontuacaoCategoriaView from '@/views/ranking/views/PontuacaoCategoriaView.vue'
-import DestaquesCompetenciaView from '@/views/ranking/views/DestaquesCompetenciaView.vue'
 import ListaParticipantesRankingView from '@/views/ranking/views/ListaParticipantesRankingView.vue'
 import DetalheParticipanteModal from '@/views/ranking/modal/DetalheParticipanteModal.vue'
 import RegistrarCompetenciaModal from '@/views/ranking/modal/RegistrarCompetenciaModal.vue'
+import VisaoGeralCategoriaModal from '@/views/ranking/modal/VisaoGeralCategoriaModal.vue'
+import VisaoGeralDestaquesModal from '@/views/ranking/modal/VisaoGeralDestaquesModal.vue'
 
 function todayLabel() {
   const d = new Date()
@@ -100,11 +128,14 @@ function parseDate(str: string) {
 @Component({
   components: {
     PodioRankingView,
-    PontuacaoCategoriaView,
-    DestaquesCompetenciaView,
     ListaParticipantesRankingView,
     DetalheParticipanteModal,
     RegistrarCompetenciaModal,
+    VisaoGeralCategoriaModal,
+    VisaoGeralDestaquesModal,
+    MoreVertical,
+    BarChart2,
+    Star,
   },
 })
 export default class RankingView extends Vue {
@@ -117,7 +148,7 @@ export default class RankingView extends Vue {
   public period = '2026 — 1º Semestre'
 
   // public
-  public podiumHeights: Record<number, string> = { 0: 'h-16', 1: 'h-24', 2: 'h-12' }
+  public podiumHeights: Record<number, string> = { 0: '4rem', 1: '6rem', 2: '3rem' }
   // public
   public podiumRank: Record<number, number> = { 0: 2, 1: 1, 2: 3 }
   // public
@@ -127,6 +158,13 @@ export default class RankingView extends Vue {
   public highlightCompetency = this.competencyNames[0]
   // public
   public search = ''
+
+  // public
+  public showMenu = false
+  // public
+  public showCategoryOverview = false
+  // public
+  public showHighlightsOverview = false
 
   // public
   public selectedParticipant: any = null
@@ -171,11 +209,6 @@ export default class RankingView extends Vue {
   // public
   public get podiumOrder() {
     return [this.podium[1], this.podium[0], this.podium[2]]
-  }
-
-  // public
-  public get restOfRanking() {
-    return this.ranking.slice(3)
   }
 
   // Pontuação por categoria (visão geral do período, somando todos os
@@ -283,6 +316,23 @@ export default class RankingView extends Vue {
   }
 
   // public
+  public positionFor(person: any) {
+    return this.ranking.indexOf(person) + 1
+  }
+
+  // public
+  public openCategoryOverview() {
+    this.showCategoryOverview = true
+    this.showMenu = false
+  }
+
+  // public
+  public openHighlightsOverview() {
+    this.showHighlightsOverview = true
+    this.showMenu = false
+  }
+
+  // public
   public openParticipant(person: any) {
     this.selectedParticipant = person
   }
@@ -321,4 +371,114 @@ export default class RankingView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.period-select {
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.menu-wrapper {
+  position: relative;
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: background-color 0.15s ease;
+}
+.menu-button:hover {
+  background-color: var(--surface-hover);
+}
+
+.menu-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 16rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  z-index: 20;
+  padding: 0.375rem 0;
+}
+
+.menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+.menu-item:hover {
+  background-color: var(--surface-hover);
+}
+
+.menu-item-icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

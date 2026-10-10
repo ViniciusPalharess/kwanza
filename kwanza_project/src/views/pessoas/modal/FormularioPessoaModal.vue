@@ -1,139 +1,91 @@
 <template>
-  <Modal :title="titulo" @close="$emit('fechar')">
-    <div class="flex flex-col items-center mb-4">
+  <modal :title="titulo" @close="$emit('fechar')">
+    <div class="avatar-section">
       <div
-        class="relative w-20 h-20"
-        :class="!viewOnly && 'group cursor-pointer'"
+        class="avatar-wrapper"
+        :class="{ 'avatar-wrapper--editable': !viewOnly }"
         @click="!viewOnly && openFilePicker()"
       >
-        <img
-          :src="form.avatarUrl || defaultAvatar"
-          alt="Foto de perfil"
-          class="w-20 h-20 rounded-full object-cover"
-        />
-        <div
-          v-if="!viewOnly"
-          class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center"
-        >
-          <Camera class="w-6 h-6 text-white" />
+        <img :src="form.avatarUrl || defaultAvatar" alt="Foto de perfil" class="avatar-image" />
+        <div v-if="!viewOnly" class="avatar-overlay">
+          <camera class="avatar-icon" />
         </div>
       </div>
       <input
         ref="fileInput"
         type="file"
         accept="image/*"
-        class="hidden"
+        class="file-input"
         @change="handleFileChange"
       />
       <button
         v-if="!viewOnly && form.avatarUrl"
         type="button"
-        class="text-xs text-red-500 mt-2 flex items-center gap-1"
+        class="remove-photo"
         @click="form.avatarUrl = ''"
       >
-        <Trash2 class="w-3 h-3" /> Remover foto
+        <trash-2 class="remove-photo-icon" /> Remover foto
       </button>
-      <p v-else-if="!viewOnly" class="text-xs text-slate-400 mt-2">Clique na foto para adicionar</p>
+      <p v-else-if="!viewOnly" class="avatar-hint">Clique na foto para adicionar</p>
     </div>
 
-    <form class="space-y-3" @submit.prevent="$emit('salvar')">
-      <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Nome completo</label
-        >
-        <input
-          v-model="form.name"
-          :disabled="viewOnly"
-          required
-          type="text"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-brand-200"
-        />
+    <form class="form" @submit.prevent="$emit('salvar')">
+      <div class="field">
+        <label class="label">Nome completo</label>
+        <input v-model="form.name" :disabled="viewOnly" required type="text" class="input" />
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-            >Tipo</label
-          >
-          <select
-            v-model="form.role"
-            :disabled="viewOnly"
-            class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 disabled:opacity-60"
-          >
+      <div class="field-row">
+        <div class="field">
+          <label class="label">Tipo</label>
+          <select v-model="form.role" :disabled="viewOnly" class="input">
             <option v-for="role in roleOptions" :key="role" :value="role">{{ role }}</option>
           </select>
         </div>
-        <div>
-          <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-            >Telefone</label
-          >
-          <input
-            v-model="form.phone"
-            :disabled="viewOnly"
-            type="text"
-            class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-brand-200"
-          />
+        <div class="field">
+          <label class="label">Telefone</label>
+          <input v-model="form.phone" :disabled="viewOnly" type="text" class="input" />
         </div>
       </div>
       <template v-if="form.role === 'Participante'">
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-              >Nível</label
-            >
+        <div class="field-row">
+          <div class="field">
+            <label class="label">Nível</label>
             <input
               v-model="form.level"
               :disabled="viewOnly"
               type="number"
               min="1"
               max="6"
-              class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 disabled:opacity-60"
+              class="input"
             />
           </div>
-          <div>
-            <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-              >Pontos</label
-            >
-            <input
-              v-model="form.score"
-              :disabled="viewOnly"
-              type="number"
-              min="0"
-              class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 disabled:opacity-60"
-            />
+          <div class="field">
+            <label class="label">Pontos</label>
+            <input v-model="form.score" :disabled="viewOnly" type="number" min="0" class="input" />
           </div>
         </div>
-        <div>
-          <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-            >Frequência (%)</label
-          >
+        <div class="field">
+          <label class="label">Frequência (%)</label>
           <input
             v-model="form.attendance"
             :disabled="viewOnly"
             type="number"
             min="0"
             max="100"
-            class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 disabled:opacity-60"
+            class="input"
           />
         </div>
       </template>
-      <div class="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-300"
-          @click="$emit('fechar')"
-        >
+      <div class="actions">
+        <button type="button" class="button-secondary" @click="$emit('fechar')">
           {{ viewOnly ? 'Fechar' : 'Cancelar' }}
         </button>
-        <button
-          v-if="!viewOnly"
-          type="submit"
-          class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold"
-        >
+        <button v-if="!viewOnly" type="submit" class="button-primary">
           {{ editingId ? 'Salvar alterações' : 'Criar cadastro' }}
         </button>
       </div>
     </form>
-  </Modal>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -194,4 +146,135 @@ export default class FormularioPessoaModal extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+}
+.avatar-wrapper--editable {
+  cursor: pointer;
+}
+
+.avatar-image {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: rgb(0 0 0 / 0.4);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-wrapper--editable:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
+}
+
+.file-input {
+  display: none;
+}
+
+.remove-photo {
+  font-size: 0.75rem;
+  color: var(--danger-text);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.remove-photo-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.avatar-hint {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin-top: 0.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-brand-200);
+}
+.input:disabled {
+  opacity: 0.6;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.button-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.button-primary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.button-primary:hover {
+  background-color: var(--accent-hover);
+}
+</style>

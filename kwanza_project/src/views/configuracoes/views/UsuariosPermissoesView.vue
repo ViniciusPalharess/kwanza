@@ -1,54 +1,30 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-  >
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white">
-        <Users class="w-5 h-5 text-brand-600" /> Usuários & Permissões
-      </h2>
-      <button
-        type="button"
-        class="text-brand-600 dark:text-brand-400 text-sm font-semibold flex items-center gap-1"
-        @click="$emit('criar')"
-      >
-        <Plus class="w-4 h-4" /> Adicionar
+  <div class="card">
+    <div class="header">
+      <h2 class="title"><users class="title-icon" /> Usuários & Permissões</h2>
+      <button type="button" class="add-button" @click="$emit('criar')">
+        <plus class="add-icon" /> Adicionar
       </button>
     </div>
-    <ul class="space-y-2">
-      <li
-        v-for="user in users"
-        :key="user.id"
-        class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 rounded-lg px-3 py-2"
-      >
-        <div
-          class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-semibold shrink-0"
-        >
-          {{ user.initials }}
+    <ul class="list">
+      <li v-for="user in users" :key="user.id" class="row">
+        <div class="avatar">{{ user.initials }}</div>
+        <div class="info">
+          <p class="name">{{ user.name }}</p>
+          <p class="role">{{ user.role }}</p>
         </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
-            {{ user.name }}
-          </p>
-          <p class="text-xs text-slate-500 dark:text-slate-400">{{ user.role }}</p>
-        </div>
-        <span
-          class="text-xs font-semibold px-2 py-0.5 rounded-full"
-          :class="roleColors[user.role]"
-          >{{ user.role }}</span
-        >
-        <button
-          type="button"
-          class="text-slate-400 hover:text-brand-600"
-          @click="$emit('editar', user)"
-        >
-          <Pencil class="w-3.5 h-3.5" />
+        <span class="role-badge" :class="`role-badge--${roleColors[user.role]}`">{{
+          user.role
+        }}</span>
+        <button type="button" class="icon-button" @click="$emit('editar', user)">
+          <pencil class="icon" />
         </button>
         <button
           type="button"
-          class="text-slate-400 hover:text-red-500"
+          class="icon-button icon-button--danger"
           @click="$emit('excluir', user)"
         >
-          <Trash2 class="w-3.5 h-3.5" />
+          <trash-2 class="icon" />
         </button>
       </li>
     </ul>
@@ -73,4 +49,138 @@ export default class UsuariosPermissoesView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+}
+
+.title-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--accent);
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--accent-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.add-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--surface-sunken);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background-color: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.role-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.role-badge--brand {
+  background-color: var(--accent-subtle-bg);
+  color: var(--accent-text-strong);
+}
+
+.role-badge--emerald {
+  background-color: var(--success-subtle-bg);
+  color: var(--success-text);
+}
+
+.role-badge--amber {
+  background-color: var(--warning-subtle-bg);
+  color: var(--warning-text);
+}
+
+.role-badge--slate {
+  background-color: var(--surface-muted);
+  color: var(--text-secondary);
+}
+
+.icon-button {
+  color: var(--text-faint);
+}
+.icon-button:hover {
+  color: var(--accent-text);
+}
+.icon-button--danger:hover {
+  color: var(--danger-text);
+}
+
+.icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+</style>

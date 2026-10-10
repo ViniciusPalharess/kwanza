@@ -1,57 +1,43 @@
 <template>
-  <div class="space-y-6">
+  <div class="page">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Pessoas</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400">
-        {{ store.list.length }} pessoas no Projeto Kwanza
-      </p>
+      <h1 class="title">Pessoas</h1>
+      <p class="subtitle">{{ store.list.length }} pessoas no Projeto Kwanza</p>
     </div>
 
-    <div
-      class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5 space-y-4"
-    >
-      <div class="flex flex-col sm:flex-row gap-3">
-        <div class="relative flex-1">
-          <Search class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+    <div class="card">
+      <div class="toolbar">
+        <div class="search-field">
+          <search class="search-icon" />
           <input
             v-model="search"
             type="text"
             placeholder="Pesquisar por nome ou e-mail..."
-            class="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-200"
+            class="search-input"
           />
         </div>
-        <button
-          type="button"
-          class="flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shrink-0"
-          @click="openCreate"
-        >
-          <UserPlus class="w-4 h-4" /> Adicionar pessoa
+        <button type="button" class="add-button" @click="openCreate">
+          <user-plus class="add-icon" /> Adicionar pessoa
         </button>
       </div>
 
-      <div class="flex flex-wrap gap-2">
+      <div class="tabs">
         <button
           v-for="tab in tabs"
           :key="tab.label"
           type="button"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition"
-          :class="
-            roleFilter === tab.label
-              ? 'bg-brand-600 text-white'
-              : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
-          "
+          class="tab"
+          :class="{ 'tab--active': roleFilter === tab.label }"
           @click="selectRoleFilter(tab.label)"
         >
           {{ tab.label }}
-          <span
-            class="text-xs px-1.5 rounded-full"
-            :class="roleFilter === tab.label ? 'bg-white/20' : 'bg-white dark:bg-slate-800'"
-            >{{ tab.count }}</span
-          >
+          <span class="tab-count" :class="{ 'tab-count--active': roleFilter === tab.label }">{{
+            tab.count
+          }}</span>
         </button>
       </div>
 
-      <ListaPessoasView
+      <lista-pessoas-view
         :pessoas="paged"
         :role-badge-class="roleBadgeClass"
         @visualizar="openView"
@@ -60,29 +46,19 @@
       />
     </div>
 
-    <div class="flex items-center justify-between text-sm">
-      <span class="text-slate-500 dark:text-slate-400">Página {{ page }} de {{ totalPages }}</span>
-      <div class="flex gap-2">
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 disabled:opacity-40"
-          :disabled="page === 1"
-          @click="goPrev"
-        >
+    <div class="pagination">
+      <span class="pagination-label">Página {{ page }} de {{ totalPages }}</span>
+      <div class="pagination-actions">
+        <button type="button" class="page-button" :disabled="page === 1" @click="goPrev">
           Anterior
         </button>
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 disabled:opacity-40"
-          :disabled="page === totalPages"
-          @click="goNext"
-        >
+        <button type="button" class="page-button" :disabled="page === totalPages" @click="goNext">
           Próxima
         </button>
       </div>
     </div>
 
-    <FormularioPessoaModal
+    <formulario-pessoa-modal
       v-if="showForm"
       :view-only="viewOnly"
       :editing-id="editingId"
@@ -92,7 +68,7 @@
       @salvar="submitForm"
     />
 
-    <DialogoConfirmacao
+    <dialogo-confirmacao
       v-if="confirmDeleteId"
       :message="`Tem certeza que deseja excluir ${confirmDeleteName}? Essa ação não pode ser desfeita.`"
       @confirm="confirmDelete"
@@ -129,9 +105,9 @@ export default class PessoasView extends Vue {
   public roleOptions = ['Participante', 'Administrador', 'Professor']
   // public
   public roleBadgeClass: Record<string, string> = {
-    Participante: 'bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300',
-    Administrador: 'bg-amber-50 dark:bg-amber-500/10 text-amber-600',
-    Professor: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600',
+    Participante: 'role-badge--brand',
+    Administrador: 'role-badge--amber',
+    Professor: 'role-badge--emerald',
   }
 
   // public
@@ -271,4 +247,157 @@ export default class PessoasView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .toolbar {
+    flex-direction: row;
+  }
+}
+
+.search-field {
+  position: relative;
+  flex: 1;
+}
+
+.search-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--text-faint);
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-brand-200);
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+.add-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.add-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--surface-muted);
+  transition: background-color 0.15s ease;
+}
+.tab:hover {
+  background-color: var(--surface-hover);
+}
+.tab--active {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.tab-count {
+  font-size: 0.75rem;
+  padding: 0 0.375rem;
+  border-radius: 9999px;
+  background-color: var(--surface);
+}
+.tab-count--active {
+  background-color: rgb(255 255 255 / 0.2);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.pagination-label {
+  color: var(--text-muted);
+}
+
+.pagination-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.page-button {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.page-button:disabled {
+  opacity: 0.4;
+}
+</style>

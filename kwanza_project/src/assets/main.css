@@ -16,6 +16,91 @@
   --color-brand-950: #172554;
 }
 
+/*
+ * Tokens de tema usados pelos componentes (ver <style scoped> de cada .vue).
+ * Ficam aqui porque o Vue não compila corretamente ":global(.dark) .classe"
+ * dentro de um <style scoped> (o seletor local é descartado) — então, em vez
+ * de repetir esse workaround em cada arquivo, os componentes só consomem
+ * estas variáveis e o claro/escuro é resolvido uma vez, centralizado.
+ */
+:root {
+  --surface: #ffffff;
+  --surface-sunken: var(--color-slate-50);
+  --surface-muted: var(--color-slate-100);
+  --surface-hover: var(--color-slate-50);
+
+  --border: var(--color-slate-200);
+  --border-subtle: var(--color-slate-100);
+
+  --text-primary: var(--color-slate-900);
+  --text-strong: var(--color-slate-800);
+  --text-secondary: var(--color-slate-600);
+  --text-muted: var(--color-slate-500);
+  --text-faint: var(--color-slate-400);
+  --text-placeholder: var(--color-slate-300);
+
+  --accent: var(--color-brand-600);
+  --accent-hover: var(--color-brand-700);
+  --accent-text: var(--color-brand-600);
+  --accent-text-strong: var(--color-brand-700);
+  --accent-subtle-bg: var(--color-brand-50);
+
+  --success: var(--color-emerald-600);
+  --success-hover: var(--color-emerald-700);
+  --success-text: var(--color-emerald-600);
+  --success-subtle-bg: var(--color-emerald-50);
+  --success-dot: var(--color-emerald-500);
+
+  --warning-text: var(--color-amber-600);
+  --warning-subtle-bg: var(--color-amber-50);
+  --warning-dot: var(--color-amber-500);
+
+  --danger: var(--color-red-600);
+  --danger-hover: var(--color-red-700);
+  --danger-text: var(--color-red-500);
+  --danger-subtle-bg: var(--color-red-50);
+  --danger-dot: var(--color-red-500);
+
+  --chart-grid: var(--color-slate-200);
+
+  --input-bg: transparent;
+
+  --podium-bar-from: var(--color-brand-100);
+  --podium-bar-to: var(--color-brand-50);
+}
+
+.dark {
+  --surface: var(--color-slate-800);
+  --surface-sunken: var(--color-slate-900);
+  --surface-muted: var(--color-slate-700);
+  --surface-hover: var(--color-slate-700);
+
+  --border: var(--color-slate-600);
+  --border-subtle: var(--color-slate-700);
+
+  --text-primary: #ffffff;
+  --text-strong: var(--color-slate-100);
+  --text-secondary: var(--color-slate-300);
+  --text-muted: var(--color-slate-400);
+  --text-faint: var(--color-slate-500);
+  --text-placeholder: var(--color-slate-600);
+
+  --accent-text: var(--color-brand-400);
+  --accent-text-strong: var(--color-brand-400);
+  --accent-subtle-bg: rgb(37 99 235 / 0.1);
+
+  --success-subtle-bg: rgb(16 185 129 / 0.1);
+  --warning-subtle-bg: rgb(245 158 11 / 0.1);
+  --danger-subtle-bg: rgb(239 68 68 / 0.1);
+
+  --chart-grid: var(--color-slate-700);
+
+  --input-bg: var(--color-slate-900);
+
+  --podium-bar-from: var(--color-brand-800);
+  --podium-bar-to: var(--color-brand-900);
+}
+
 body {
   @apply bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100;
   transition:

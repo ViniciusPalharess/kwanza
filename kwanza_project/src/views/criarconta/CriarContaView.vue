@@ -1,120 +1,84 @@
 <template>
-  <LayoutAutenticacao>
-    <p
-      v-if="!isSupabaseConfigured"
-      class="text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-lg px-3 py-2 mb-4"
-    >
+  <layout-autenticacao>
+    <p v-if="!isSupabaseConfigured" class="warning-banner">
       Backend ainda não configurado. Defina as variáveis do Supabase em <code>.env.local</code>.
     </p>
 
     <template v-if="step === 'choice'">
-      <h2 class="text-3xl font-bold mb-8 text-[#616161] text-center">Criar sua conta</h2>
+      <h2 class="choice-title">Criar sua conta</h2>
 
-      <div class="space-y-3">
-        <button
-          type="button"
-          @click="step = 'form'"
-          class="relative w-full flex items-center border border-slate-200 rounded-lg px-4 py-2.5 hover:bg-slate-50 transition font-medium text-[#616161]"
-        >
-          <Mail class="absolute left-4 w-5 h-5 text-slate-400" />
-          <span class="flex-1 text-center">Continuar com E-mail</span>
+      <div class="choice-list">
+        <button type="button" class="choice-button" @click="step = 'form'">
+          <mail class="choice-icon" />
+          <span class="choice-label">Continuar com E-mail</span>
         </button>
-        <button
-          type="button"
-          disabled
-          class="relative w-full flex items-center border border-slate-200 rounded-lg px-4 py-2.5 transition font-medium text-[#616161] opacity-50 cursor-not-allowed"
-        >
-          <IconeGoogle class="absolute left-4 w-5 h-5" />
-          <span class="flex-1 text-center">Continuar com Google</span>
+        <button type="button" disabled class="choice-button choice-button--disabled">
+          <icone-google class="choice-icon" />
+          <span class="choice-label">Continuar com Google</span>
         </button>
-        <button
-          type="button"
-          disabled
-          class="relative w-full flex items-center border border-slate-200 rounded-lg px-4 py-2.5 transition font-medium text-[#616161] opacity-50 cursor-not-allowed"
-        >
-          <IconeMicrosoft class="absolute left-4 w-5 h-5" />
-          <span class="flex-1 text-center">Continuar com Microsoft</span>
+        <button type="button" disabled class="choice-button choice-button--disabled">
+          <icone-microsoft class="choice-icon" />
+          <span class="choice-label">Continuar com Microsoft</span>
         </button>
       </div>
 
-      <p class="text-sm text-center text-[#616161] mt-6">
+      <p class="choice-footer">
         Já tem uma conta?
-        <RouterLink :to="{ name: 'cadastro' }" class="text-brand-700 font-semibold"
-          >Entrar</RouterLink
-        >
+        <router-link :to="{ name: 'cadastro' }" class="footer-link">Entrar</router-link>
       </p>
     </template>
 
     <template v-else-if="step === 'form'">
-      <button
-        type="button"
-        @click="step = 'choice'"
-        class="text-sm text-slate-400 hover:text-slate-600 mb-4"
-      >
-        ← Voltar
-      </button>
-      <h2 class="text-xl font-bold mb-1 text-slate-900">Criar conta com e-mail</h2>
-      <p class="text-sm text-slate-500 mb-5">Leva menos de um minuto.</p>
+      <button type="button" class="back-button" @click="step = 'choice'">← Voltar</button>
+      <h2 class="title">Criar conta com e-mail</h2>
+      <p class="subtitle">Leva menos de um minuto.</p>
 
-      <form class="space-y-4" @submit.prevent="handleSignup">
-        <div>
-          <label class="text-sm font-medium block mb-1" for="name">Nome</label>
-          <input
-            id="name"
-            v-model="name"
-            type="text"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
-            placeholder="Seu nome"
-          />
+      <form class="form" @submit.prevent="handleSignup">
+        <div class="field">
+          <label class="label" for="name">Nome</label>
+          <input id="name" v-model="name" type="text" class="input" placeholder="Seu nome" />
         </div>
-        <div>
-          <label class="text-sm font-medium block mb-1" for="email">E-mail</label>
+        <div class="field">
+          <label class="label" for="email">E-mail</label>
           <input
             id="email"
             v-model="email"
             type="email"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
+            class="input"
             placeholder="voce@email.com"
           />
         </div>
-        <div>
-          <label class="text-sm font-medium block mb-1" for="password">Senha</label>
+        <div class="field">
+          <label class="label" for="password">Senha</label>
           <input
             id="password"
             v-model="password"
             type="password"
-            class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
+            class="input"
             placeholder="••••••••"
           />
         </div>
 
-        <button
-          type="submit"
-          :disabled="loading"
-          class="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition"
-        >
+        <button type="submit" :disabled="loading" class="submit-button">
           {{ loading ? 'Criando conta...' : 'Criar conta' }}
         </button>
       </form>
     </template>
 
     <template v-else-if="step === 'sent'">
-      <div class="text-center py-6">
-        <Mail class="w-10 h-10 text-brand-600 mx-auto mb-4" />
-        <h2 class="text-xl font-bold mb-2 text-slate-900">Confira seu e-mail</h2>
-        <p class="text-sm text-slate-500">
+      <div class="sent-wrapper">
+        <mail class="sent-icon" />
+        <h2 class="title">Confira seu e-mail</h2>
+        <p class="subtitle">
           Enviamos um link de confirmação para <strong>{{ email }}</strong
           >. Clique nele para ativar sua conta.
         </p>
-        <RouterLink
-          :to="{ name: 'cadastro' }"
-          class="inline-block mt-6 text-brand-700 font-semibold text-sm"
-        >
+        <router-link :to="{ name: 'cadastro' }" class="sent-link">
           Voltar para o login
-        </RouterLink>
+        </router-link>
       </div>
     </template>
-  </LayoutAutenticacao>
+  </layout-autenticacao>
 </template>
 
 <script lang="ts">
@@ -177,4 +141,155 @@ export default class CriarContaView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.warning-banner {
+  font-size: 0.75rem;
+  background-color: var(--warning-subtle-bg);
+  color: var(--warning-text);
+  border: 1px solid var(--color-amber-200);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.choice-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #616161;
+  text-align: center;
+}
+
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.choice-button {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-slate-200);
+  border-radius: 0.5rem;
+  padding: 0.625rem 1rem;
+  transition: background-color 0.15s ease;
+  font-weight: 500;
+  color: #616161;
+}
+.choice-button:hover {
+  background-color: var(--color-slate-50);
+}
+.choice-button--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.choice-icon {
+  position: absolute;
+  left: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-slate-400);
+}
+
+.choice-label {
+  flex: 1;
+  text-align: center;
+}
+
+.choice-footer {
+  font-size: 0.875rem;
+  text-align: center;
+  color: #616161;
+  margin-top: 1.5rem;
+}
+
+.footer-link {
+  color: var(--accent-text-strong);
+  font-weight: 600;
+}
+
+.back-button {
+  font-size: 0.875rem;
+  color: var(--color-slate-400);
+  margin-bottom: 1rem;
+}
+.back-button:hover {
+  color: var(--color-slate-600);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--color-slate-900);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--color-slate-500);
+  margin-bottom: 1.25rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--color-slate-200);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-brand-300);
+}
+
+.submit-button {
+  width: 100%;
+  background-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 0.625rem 0;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+.submit-button:hover {
+  background-color: var(--accent-hover);
+}
+.submit-button:disabled {
+  opacity: 0.6;
+}
+
+.sent-wrapper {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.sent-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--accent);
+  margin: 0 auto 1rem;
+}
+
+.sent-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--accent-text-strong);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+</style>

@@ -1,14 +1,10 @@
 <template>
-  <div
-    class="flex flex-col items-center justify-center text-center py-24 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm"
-  >
-    <div
-      class="w-14 h-14 rounded-full bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-4"
-    >
-      <Wrench class="w-6 h-6" />
+  <div class="wrapper">
+    <div class="icon-circle">
+      <wrench class="icon" />
     </div>
-    <h1 class="text-xl font-bold text-slate-900 dark:text-white mb-1">{{ title }}</h1>
-    <p class="text-sm text-slate-500 dark:text-slate-400">Esta seção está em construção.</p>
+    <h1 class="title">{{ title }}</h1>
+    <p class="subtitle">Esta seção está em construção.</p>
   </div>
 </template>
 
@@ -26,4 +22,46 @@ export default class ConteudosView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 0;
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.icon-circle {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  background-color: var(--accent-subtle-bg);
+  color: var(--accent-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+</style>

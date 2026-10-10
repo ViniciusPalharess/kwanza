@@ -1,97 +1,50 @@
 <template>
-  <Modal title="Meus Dados" @close="$emit('close')">
-    <div class="flex flex-col items-center mb-5">
-      <div class="relative w-24 h-24 group cursor-pointer" @click="openFilePicker">
-        <img
-          :src="form.avatarUrl || defaultAvatar"
-          alt="Foto de perfil"
-          class="w-24 h-24 rounded-full object-cover"
-        />
-        <div
-          class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center"
-        >
-          <Camera class="w-6 h-6 text-white" />
+  <modal title="Meus Dados" @close="$emit('close')">
+    <div class="avatar-section">
+      <div class="avatar-wrapper" @click="openFilePicker">
+        <img :src="form.avatarUrl || defaultAvatar" alt="Foto de perfil" class="avatar-image" />
+        <div class="avatar-overlay">
+          <camera class="avatar-icon" />
         </div>
       </div>
       <input
         ref="fileInput"
         type="file"
         accept="image/*"
-        class="hidden"
+        class="file-input"
         @change="handleFileChange"
       />
-      <p class="text-xs text-slate-400 mt-2">Clique na foto para alterar</p>
+      <p class="avatar-hint">Clique na foto para alterar</p>
     </div>
 
-    <form class="space-y-3" @submit.prevent="handleSave">
-      <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Nome completo</label
-        >
-        <input
-          v-model="form.name"
-          type="text"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-200"
-        />
+    <form class="form" @submit.prevent="handleSave">
+      <div class="field">
+        <label class="label">Nome completo</label>
+        <input v-model="form.name" type="text" class="input" />
       </div>
-      <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >E-mail</label
-        >
-        <input
-          v-model="form.email"
-          type="email"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-200"
-        />
+      <div class="field">
+        <label class="label">E-mail</label>
+        <input v-model="form.email" type="email" class="input" />
       </div>
-      <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Telefone</label
-        >
-        <input
-          v-model="form.phone"
-          type="tel"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-200"
-        />
+      <div class="field">
+        <label class="label">Telefone</label>
+        <input v-model="form.phone" type="tel" class="input" />
       </div>
-      <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Data de nascimento</label
-        >
-        <input
-          v-model="form.birthDate"
-          type="date"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-200"
-        />
+      <div class="field">
+        <label class="label">Data de nascimento</label>
+        <input v-model="form.birthDate" type="date" class="input" />
       </div>
-      <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Sobre mim</label
-        >
-        <textarea
-          v-model="form.bio"
-          rows="3"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-200"
-        />
+      <div class="field">
+        <label class="label">Sobre mim</label>
+        <textarea v-model="form.bio" rows="3" class="input" />
       </div>
 
-      <div class="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-300"
-          @click="$emit('close')"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold"
-        >
-          Salvar alterações
-        </button>
+      <div class="actions">
+        <button type="button" class="button-secondary" @click="$emit('close')">Cancelar</button>
+        <button type="submit" class="button-primary">Salvar alterações</button>
       </div>
     </form>
-  </Modal>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -150,4 +103,111 @@ export default class PerfilModal extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  cursor: pointer;
+}
+
+.avatar-image {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: rgb(0 0 0 / 0.4);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-wrapper:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.avatar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
+}
+
+.file-input {
+  display: none;
+}
+
+.avatar-hint {
+  font-size: 0.75rem;
+  color: var(--color-slate-400);
+  margin-top: 0.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-brand-200);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.button-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.button-primary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-brand-600);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.button-primary:hover {
+  background-color: var(--color-brand-700);
+}
+</style>

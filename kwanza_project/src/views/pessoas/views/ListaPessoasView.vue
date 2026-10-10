@@ -1,77 +1,54 @@
 <template>
-  <div class="space-y-3">
-    <div
-      class="hidden md:grid grid-cols-[minmax(0,1fr)_120px_110px_80px_90px_160px_90px] gap-2 px-5 text-xs font-semibold text-slate-400 uppercase"
-    >
+  <div class="list">
+    <div class="list-header">
       <span>Pessoa</span>
       <span>Tipo</span>
       <span>Telefone</span>
       <span>Nível</span>
       <span>Pontos</span>
       <span>Frequência</span>
-      <span class="text-right">Ações</span>
+      <span class="align-right">Ações</span>
     </div>
 
     <div
       v-for="person in pessoas"
       :key="person.id"
-      class="grid grid-cols-2 md:grid-cols-[minmax(0,1fr)_120px_110px_80px_90px_160px_90px] items-center gap-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 px-5 py-3.5 cursor-pointer hover:border-brand-200 dark:hover:border-brand-500/40 transition"
+      class="row"
       @click="$emit('visualizar', person)"
     >
-      <div class="col-span-2 md:col-span-1 flex items-center gap-3 min-w-0">
-        <img
-          :src="person.avatarUrl || defaultAvatar"
-          alt="Foto de perfil"
-          class="w-9 h-9 rounded-full object-cover shrink-0"
-        />
-        <div class="min-w-0">
-          <p class="font-semibold text-slate-800 dark:text-slate-100 truncate">
-            {{ person.name }}
-          </p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
-            {{ emailFor(person.name) }}
-          </p>
+      <div class="person-cell">
+        <img :src="person.avatarUrl || defaultAvatar" alt="Foto de perfil" class="avatar" />
+        <div class="person-info">
+          <p class="person-name">{{ person.name }}</p>
+          <p class="person-email">{{ emailFor(person.name) }}</p>
         </div>
       </div>
       <span>
-        <span
-          class="text-xs font-semibold px-2 py-0.5 rounded-full"
-          :class="roleBadgeClass[person.role]"
-          >{{ person.role }}</span
-        >
+        <span class="role-badge" :class="roleBadgeClass[person.role]">{{ person.role }}</span>
       </span>
-      <span class="text-slate-600 dark:text-slate-300 text-sm whitespace-nowrap">{{
-        person.phone || '—'
-      }}</span>
+      <span class="phone">{{ person.phone || '—' }}</span>
       <span>
-        <span
-          v-if="person.role === 'Participante'"
-          class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full"
-          >Nv {{ person.level }}</span
-        >
-        <span v-else class="text-slate-400">—</span>
+        <span v-if="person.role === 'Participante'" class="level-badge">Nv {{ person.level }}</span>
+        <span v-else class="muted">—</span>
       </span>
-      <span class="font-semibold text-slate-800 dark:text-slate-100">{{
-        person.role === 'Participante' ? person.score : '—'
-      }}</span>
-      <div v-if="person.role === 'Participante'" class="flex items-center gap-2">
-        <div class="h-1.5 flex-1 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-          <div
-            class="h-full bg-brand-600 rounded-full"
-            :style="{ width: person.attendance + '%' }"
-          />
+      <span class="score">{{ person.role === 'Participante' ? person.score : '—' }}</span>
+      <div v-if="person.role === 'Participante'" class="attendance-cell">
+        <div class="track">
+          <div class="fill" :style="{ width: person.attendance + '%' }" />
         </div>
-        <span class="text-xs text-slate-500 dark:text-slate-400 w-9 text-right"
-          >{{ person.attendance }}%</span
-        >
+        <span class="attendance-value">{{ person.attendance }}%</span>
       </div>
-      <span v-else class="text-slate-400">—</span>
-      <div class="flex items-center justify-end gap-3 text-slate-400">
-        <button type="button" class="hover:text-brand-600" @click.stop="$emit('editar', person)">
-          <Pencil class="w-4 h-4" />
+      <span v-else class="muted">—</span>
+      <div class="row-actions">
+        <button type="button" class="icon-button" @click.stop="$emit('editar', person)">
+          <pencil class="icon" />
         </button>
-        <button type="button" class="hover:text-red-500" @click.stop="$emit('excluir', person)">
-          <Trash2 class="w-4 h-4" />
+        <button
+          type="button"
+          class="icon-button icon-button--danger"
+          @click.stop="$emit('excluir', person)"
+        >
+          <trash-2 class="icon" />
         </button>
       </div>
     </div>
@@ -103,4 +80,183 @@ export default class ListaPessoasView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.list-header {
+  display: none;
+  gap: 0.5rem;
+  padding: 0 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+@media (min-width: 768px) {
+  .list-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px 110px 80px 90px 160px 90px;
+  }
+}
+
+.align-right {
+  text-align: right;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-subtle);
+  padding: 0.875rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.row:hover {
+  border-color: var(--color-brand-200);
+}
+@media (min-width: 768px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr) 120px 110px 80px 90px 160px 90px;
+  }
+}
+
+.person-cell {
+  grid-column: span 2 / span 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+@media (min-width: 768px) {
+  .person-cell {
+    grid-column: span 1 / span 1;
+  }
+}
+
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.person-info {
+  min-width: 0;
+}
+
+.person-name {
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.person-email {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.role-badge--brand {
+  background-color: var(--accent-subtle-bg);
+  color: var(--accent-text-strong);
+}
+.role-badge--amber {
+  background-color: var(--warning-subtle-bg);
+  color: var(--warning-dot);
+}
+.role-badge--emerald {
+  background-color: var(--success-subtle-bg);
+  color: var(--success-text);
+}
+
+.phone {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.level-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--surface-muted);
+  color: var(--text-secondary);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.muted {
+  color: var(--text-faint);
+}
+
+.score {
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.attendance-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.track {
+  height: 0.375rem;
+  flex: 1;
+  border-radius: 9999px;
+  background-color: var(--surface-muted);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--accent);
+}
+
+.attendance-value {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  width: 2.25rem;
+  text-align: right;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  color: var(--text-faint);
+}
+
+.icon-button:hover {
+  color: var(--accent-text);
+}
+.icon-button--danger:hover {
+  color: var(--danger-text);
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

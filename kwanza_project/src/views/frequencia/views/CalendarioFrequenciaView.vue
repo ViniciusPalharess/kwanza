@@ -1,44 +1,26 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-  >
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-bold text-lg text-slate-900 dark:text-white">Calendário</h2>
-      <div class="flex items-center gap-1">
-        <button
-          type="button"
-          class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"
-          @click="$emit('mesAnterior')"
-        >
-          <ChevronLeft class="w-4 h-4" />
+  <div class="card">
+    <div class="header">
+      <h2 class="title">Calendário</h2>
+      <div class="nav">
+        <button type="button" class="nav-button" @click="$emit('mesAnterior')">
+          <chevron-left class="nav-icon" />
         </button>
-        <span class="text-sm font-medium text-slate-600 dark:text-slate-300 w-28 text-center">{{
-          monthLabel
-        }}</span>
-        <button
-          type="button"
-          class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"
-          @click="$emit('mesSeguinte')"
-        >
-          <ChevronRight class="w-4 h-4" />
+        <span class="month-label">{{ monthLabel }}</span>
+        <button type="button" class="nav-button" @click="$emit('mesSeguinte')">
+          <chevron-right class="nav-icon" />
         </button>
       </div>
     </div>
-    <div class="grid grid-cols-7 gap-1.5 text-center text-xs">
-      <span v-for="(d, i) in weekDays" :key="'wd-' + i" class="text-slate-400 font-semibold py-1">{{
-        d
-      }}</span>
+    <div class="grid">
+      <span v-for="(d, i) in weekDays" :key="'wd-' + i" class="weekday">{{ d }}</span>
       <template v-for="(day, i) in days" :key="'d-' + i">
         <span v-if="day === null" />
         <button
           v-else
           type="button"
-          class="w-8 h-8 flex items-center justify-center rounded-full mx-auto transition"
-          :class="
-            isDaySelected(day)
-              ? 'bg-brand-600 text-white font-semibold'
-              : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'
-          "
+          class="day"
+          :class="{ 'day--selected': isDaySelected(day) }"
           @click="$emit('selecionarDia', day)"
         >
           {{ day }}
@@ -93,4 +75,90 @@ export default class CalendarioFrequenciaView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.nav-button {
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  color: var(--text-muted);
+}
+.nav-button:hover {
+  background-color: var(--surface-hover);
+}
+
+.nav-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.month-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  width: 7rem;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.375rem;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.weekday {
+  color: var(--text-faint);
+  font-weight: 600;
+  padding: 0.25rem 0;
+}
+
+.day {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  margin: 0 auto;
+  color: var(--text-strong);
+  transition: background-color 0.15s ease;
+}
+.day:hover {
+  background-color: var(--surface-hover);
+}
+.day--selected {
+  background-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.day--selected:hover {
+  background-color: var(--accent);
+}
+</style>

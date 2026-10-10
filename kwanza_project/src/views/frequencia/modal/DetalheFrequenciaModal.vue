@@ -1,69 +1,61 @@
 <template>
-  <Modal title="Frequência" @close="$emit('fechar')">
-    <div class="flex items-center gap-3 mb-5">
-      <img
-        :src="participant.avatarUrl || defaultAvatar"
-        alt="Foto de perfil"
-        class="w-12 h-12 rounded-full object-cover"
-      />
-      <p class="font-bold text-lg text-slate-900 dark:text-white">
-        {{ participant.name }}
-      </p>
+  <modal title="Frequência" @close="$emit('fechar')">
+    <div class="person-row">
+      <img :src="participant.avatarUrl || defaultAvatar" alt="Foto de perfil" class="avatar" />
+      <p class="person-name">{{ participant.name }}</p>
     </div>
 
-    <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Frequência geral</p>
-    <p class="text-3xl font-bold text-brand-600 dark:text-brand-400 mb-2">{{ rate }}%</p>
-    <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden mb-4">
-      <div class="h-full bg-brand-600 rounded-full" :style="{ width: rate + '%' }" />
+    <p class="label">Frequência geral</p>
+    <p class="rate">{{ rate }}%</p>
+    <div class="track track--main">
+      <div class="fill" :style="{ width: rate + '%' }" />
     </div>
 
-    <div class="grid grid-cols-3 gap-2 text-center mb-5">
+    <div class="stats-grid">
       <div>
-        <p class="text-lg font-bold text-slate-800 dark:text-slate-100">{{ stats.present }}</p>
-        <p class="text-xs text-slate-400 dark:text-slate-500">Presenças</p>
+        <p class="stat-value">{{ stats.present }}</p>
+        <p class="stat-label">Presenças</p>
       </div>
       <div>
-        <p class="text-lg font-bold text-slate-800 dark:text-slate-100">{{ stats.absent }}</p>
-        <p class="text-xs text-slate-400 dark:text-slate-500">Ausências</p>
+        <p class="stat-value">{{ stats.absent }}</p>
+        <p class="stat-label">Ausências</p>
       </div>
       <div>
-        <p class="text-lg font-bold text-slate-800 dark:text-slate-100">{{ stats.total }}</p>
-        <p class="text-xs text-slate-400 dark:text-slate-500">Total</p>
+        <p class="stat-value">{{ stats.total }}</p>
+        <p class="stat-label">Total</p>
       </div>
     </div>
 
-    <hr class="border-slate-100 dark:border-slate-700 mb-4" />
+    <hr class="divider" />
 
-    <p class="font-semibold text-sm text-slate-700 dark:text-slate-200 mb-2">Frequência por mês</p>
-    <ul class="space-y-2 mb-5">
-      <li v-for="m in monthly" :key="m.monthIndex" class="flex items-center gap-3">
-        <span class="w-14 text-xs text-slate-500 dark:text-slate-400 shrink-0">{{ m.label }}</span>
-        <div class="h-2 flex-1 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-          <div class="h-full bg-brand-500 rounded-full" :style="{ width: m.rate + '%' }" />
+    <p class="section-title">Frequência por mês</p>
+    <ul class="monthly-list">
+      <li v-for="m in monthly" :key="m.monthIndex" class="monthly-row">
+        <span class="monthly-label">{{ m.label }}</span>
+        <div class="track track--small">
+          <div class="fill fill--light" :style="{ width: m.rate + '%' }" />
         </div>
-        <span class="w-10 text-xs text-slate-500 dark:text-slate-400 text-right shrink-0"
-          >{{ m.rate }}%</span
-        >
+        <span class="monthly-value">{{ m.rate }}%</span>
       </li>
     </ul>
 
-    <hr class="border-slate-100 dark:border-slate-700 mb-4" />
+    <hr class="divider" />
 
-    <p class="font-semibold text-sm text-slate-700 dark:text-slate-200 mb-2">Histórico</p>
-    <ul class="max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-700">
-      <li v-for="h in history" :key="h.day" class="flex items-center justify-between py-2 text-sm">
-        <span class="text-slate-600 dark:text-slate-300">{{ h.label }}</span>
+    <p class="section-title">Histórico</p>
+    <ul class="history-list">
+      <li v-for="h in history" :key="h.day" class="history-row">
+        <span class="history-label">{{ h.label }}</span>
         <span
-          class="flex items-center gap-1 font-semibold"
-          :class="h.present ? 'text-emerald-600' : 'text-red-500'"
+          class="history-status"
+          :class="h.present ? 'history-status--present' : 'history-status--absent'"
         >
-          <Check v-if="h.present" class="w-3.5 h-3.5" />
-          <X v-else class="w-3.5 h-3.5" />
+          <check v-if="h.present" class="history-icon" />
+          <x v-else class="history-icon" />
           {{ h.present ? 'Presente' : 'Ausente' }}
         </span>
       </li>
     </ul>
-  </Modal>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -98,4 +90,166 @@ export default class DetalheFrequenciaModal extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.person-name {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.rate {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  margin-bottom: 0.5rem;
+}
+
+.track {
+  border-radius: 9999px;
+  background-color: var(--surface-muted);
+  overflow: hidden;
+}
+
+.track--main {
+  height: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.track--small {
+  height: 0.5rem;
+  flex: 1;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--accent);
+}
+
+.fill--light {
+  background-color: var(--color-brand-500);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.divider {
+  border-color: var(--border-subtle);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.monthly-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.monthly-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.monthly-label {
+  width: 3.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.monthly-value {
+  width: 2.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.history-list {
+  max-height: 12rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.history-row:first-child {
+  border-top: none;
+}
+
+.history-label {
+  color: var(--text-secondary);
+}
+
+.history-status {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+}
+
+.history-status--present {
+  color: var(--success);
+}
+
+.history-status--absent {
+  color: var(--danger-text);
+}
+
+.history-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+</style>

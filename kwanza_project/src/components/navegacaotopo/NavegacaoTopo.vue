@@ -1,187 +1,123 @@
 <template>
-  <header
-    class="z-20 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shrink-0"
-  >
-    <div class="flex items-center gap-3 pl-4 sm:pl-6 pr-2 sm:pr-3 h-12">
-      <RouterLink :to="{ name: 'painel' }" class="shrink-0">
-        <p class="text-lg font-bold text-brand-700 dark:text-brand-400 leading-tight">
-          Projeto Kwanza
-        </p>
-      </RouterLink>
+  <header class="header">
+    <div class="bar">
+      <router-link :to="{ name: 'painel' }" class="logo">
+        <p class="logo-text">Projeto Kwanza</p>
+      </router-link>
 
-      <div class="flex items-center gap-1.5 ml-auto">
+      <div class="actions">
         <!-- Menu do usuário -->
-        <div class="relative" @mouseenter="showUserMenu = true" @mouseleave="showUserMenu = false">
-          <button
-            type="button"
-            class="flex items-center gap-2 pl-1"
-            @click="showUserMenu = !showUserMenu"
-          >
+        <div class="user-menu" @mouseenter="showUserMenu = true" @mouseleave="showUserMenu = false">
+          <button type="button" class="user-trigger" @click="showUserMenu = !showUserMenu">
             <img
               :src="usuarioStore.user.avatarUrl || defaultAvatar"
               alt="Foto de perfil"
-              class="w-7 h-7 rounded-full object-cover shrink-0"
+              class="avatar"
             />
-            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 hidden sm:block">
-              {{ usuarioStore.user.name }}
-            </p>
+            <p class="user-name">{{ usuarioStore.user.name }}</p>
           </button>
 
           <template v-if="showUserMenu">
-            <div
-              class="absolute right-0 top-full w-96 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-lg z-20 p-4"
-            >
-              <div class="flex items-start gap-3">
+            <div class="dropdown">
+              <div class="dropdown-header">
                 <img
                   :src="usuarioStore.user.avatarUrl || defaultAvatar"
                   alt="Foto de perfil"
-                  class="w-14 h-14 rounded-full object-cover shrink-0"
+                  class="dropdown-avatar"
                 />
-                <div class="flex-1 min-w-0">
-                  <p class="font-bold text-slate-900 dark:text-white truncate">
-                    {{ usuarioStore.user.name }}
-                  </p>
-                  <p class="text-xs">
-                    <button
-                      type="button"
-                      class="text-brand-600 dark:text-brand-400 font-semibold hover:underline"
-                      @click="openProfileModal"
-                    >
+                <div class="dropdown-info">
+                  <p class="dropdown-name">{{ usuarioStore.user.name }}</p>
+                  <p class="dropdown-actions">
+                    <button type="button" class="link-action" @click="openProfileModal">
                       Meus Dados
                     </button>
-                    <span class="text-slate-300 dark:text-slate-600"> | </span>
-                    <button
-                      type="button"
-                      class="text-brand-600 dark:text-brand-400 font-semibold hover:underline"
-                      @click="handleLogout"
-                    >
-                      Sair
-                    </button>
+                    <span class="separator"> | </span>
+                    <button type="button" class="link-action" @click="handleLogout">Sair</button>
                   </p>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                    {{ usuarioStore.user.email }}
-                  </p>
+                  <p class="dropdown-email">{{ usuarioStore.user.email }}</p>
                 </div>
-                <div class="text-right shrink-0">
-                  <p class="text-xl font-bold text-brand-600 dark:text-brand-400 leading-none">
-                    {{ usuarioStore.user.score }}
-                  </p>
-                  <p class="text-[11px] text-slate-400">pontos</p>
+                <div class="dropdown-score">
+                  <p class="score-value">{{ usuarioStore.user.score }}</p>
+                  <p class="score-label">pontos</p>
                 </div>
               </div>
 
-              <p class="text-xs text-slate-400 dark:text-slate-500 mt-3">
-                Usuário Kwanza desde {{ joinedAtFormatted }}
-              </p>
-              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+              <p class="joined-info">Usuário Kwanza desde {{ joinedAtFormatted }}</p>
+              <p class="level-info">
                 Nível {{ usuarioStore.user.level }} · {{ usuarioStore.user.levelName }}
-                <HelpCircle class="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
+                <help-circle class="level-info-icon" />
               </p>
 
-              <hr class="my-3 border-slate-100 dark:border-slate-700" />
+              <hr class="divider" />
 
-              <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
-                Minha Experiência
-              </p>
-              <div class="space-y-1">
-                <div
-                  class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300"
-                >
-                  <span class="flex items-center gap-1.5"
-                    ><Clock3 class="w-3.5 h-3.5 text-slate-400" /> Horas acumuladas</span
-                  >
-                  <span
-                    class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full"
-                    >{{ usuarioStore.user.hours }}h</span
-                  >
+              <p class="section-title">Minha Experiência</p>
+              <div class="stats-list">
+                <div class="stat-row">
+                  <span class="stat-label"><clock3 class="stat-icon" /> Horas acumuladas</span>
+                  <span class="stat-value">{{ usuarioStore.user.hours }}h</span>
                 </div>
-                <RouterLink
+                <router-link
                   :to="{ name: 'frequencia' }"
-                  class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300"
+                  class="stat-row stat-row--link"
                   @click="showUserMenu = false"
                 >
-                  <span class="flex items-center gap-1.5"
-                    ><CalendarCheck class="w-3.5 h-3.5 text-slate-400" /> Frequência</span
-                  >
-                  <span
-                    class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full"
-                    >{{ usuarioStore.user.attendance }}%</span
-                  >
-                </RouterLink>
-                <div
-                  class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300"
-                >
-                  <span class="flex items-center gap-1.5"
-                    ><Flame class="w-3.5 h-3.5 text-slate-400" /> Sequência</span
-                  >
-                  <span
-                    class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full"
-                    >{{ usuarioStore.user.streakDays }} dias</span
-                  >
+                  <span class="stat-label"><calendar-check class="stat-icon" /> Frequência</span>
+                  <span class="stat-value">{{ usuarioStore.user.attendance }}%</span>
+                </router-link>
+                <div class="stat-row">
+                  <span class="stat-label"><flame class="stat-icon" /> Sequência</span>
+                  <span class="stat-value">{{ usuarioStore.user.streakDays }} dias</span>
                 </div>
-                <div
-                  class="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-300"
-                >
-                  <span class="flex items-center gap-1.5"
-                    ><UserPlus class="w-3.5 h-3.5 text-slate-400" /> Convites realizados</span
+                <div class="stat-row">
+                  <span class="stat-label"
+                    ><user-plus class="stat-icon" /> Convites realizados</span
                   >
-                  <span
-                    class="text-xs font-semibold bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full"
-                    >{{ usuarioStore.user.invites }}</span
-                  >
+                  <span class="stat-value">{{ usuarioStore.user.invites }}</span>
                 </div>
               </div>
             </div>
           </template>
         </div>
 
-        <button
-          type="button"
-          class="relative w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-          title="Notificações"
-        >
-          <Bell class="w-5 h-5" />
-          <span
-            class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-800"
-          ></span>
+        <button type="button" class="icon-button" title="Notificações">
+          <bell class="icon" />
+          <span class="notification-dot"></span>
         </button>
 
-        <RouterLink
+        <router-link
           :to="{ name: 'configuracoes' }"
-          class="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-          active-class="text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10"
+          class="icon-button"
+          active-class="icon-button--active"
           title="Configurações"
         >
-          <Settings class="w-5 h-5" />
-        </RouterLink>
+          <settings class="icon" />
+        </router-link>
 
         <!-- Opções de tela -->
-        <div class="relative">
+        <div class="more-wrapper">
           <button
             type="button"
-            class="flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+            class="icon-button"
             title="Mais opções"
             @click="showMore = !showMore"
           >
-            <MoreVertical class="w-5 h-5" />
+            <more-vertical class="icon" />
           </button>
 
           <template v-if="showMore">
-            <div class="fixed inset-0 z-10" @click="showMore = false" />
-            <div
-              class="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-lg z-20 py-1.5"
-            >
-              <RouterLink
+            <div class="backdrop" @click="showMore = false" />
+            <div class="more-menu">
+              <router-link
                 v-for="link in moreLinks"
                 :key="link.routeName"
                 :to="{ name: link.routeName }"
-                class="flex items-center gap-2.5 px-3.5 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
-                active-class="text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10"
+                class="more-link"
+                active-class="more-link--active"
                 @click="showMore = false"
               >
-                <component :is="link.icon" class="w-4 h-4" />
+                <component :is="link.icon" class="more-link-icon" />
                 {{ link.label }}
-              </RouterLink>
+              </router-link>
             </div>
           </template>
         </div>
@@ -189,7 +125,7 @@
     </div>
   </header>
 
-  <PerfilModal v-if="showProfileModal" @close="showProfileModal = false" />
+  <perfil-modal v-if="showProfileModal" @close="showProfileModal = false" />
 </template>
 
 <script lang="ts">
@@ -278,4 +214,317 @@ export default class NavegacaoTopo extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.header {
+  z-index: 20;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-left: 1rem;
+  padding-right: 0.5rem;
+  height: 3rem;
+}
+@media (min-width: 640px) {
+  .bar {
+    padding-left: 1.5rem;
+    padding-right: 0.75rem;
+  }
+}
+
+.logo {
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent-text-strong);
+  line-height: 1.25;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-left: auto;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  display: none;
+}
+@media (min-width: 640px) {
+  .user-name {
+    display: block;
+  }
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 24rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  z-index: 20;
+  padding: 1rem;
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.dropdown-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.dropdown-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dropdown-name {
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-actions {
+  font-size: 0.75rem;
+}
+
+.link-action {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+.link-action:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  color: var(--text-placeholder);
+}
+
+.dropdown-email {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.125rem;
+}
+
+.dropdown-score {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.score-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+}
+
+.joined-info {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin-top: 0.75rem;
+}
+
+.level-info {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.125rem;
+}
+
+.level-info-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--text-placeholder);
+}
+
+.divider {
+  margin: 0.75rem 0;
+  border-color: var(--border-subtle);
+}
+
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.375rem;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.stat-row--link:hover {
+  background-color: var(--surface-hover);
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.stat-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--text-faint);
+}
+
+.stat-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--surface-muted);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.icon-button {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+.icon-button:hover {
+  color: var(--text-secondary);
+  background-color: var(--surface-hover);
+}
+.icon-button--active {
+  color: var(--accent-text-strong);
+  background-color: var(--accent-subtle-bg);
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--danger);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.more-wrapper {
+  position: relative;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.more-menu {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 13rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  z-index: 20;
+  padding: 0.375rem 0;
+}
+
+.more-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.more-link:hover {
+  background-color: var(--surface-hover);
+}
+.more-link--active {
+  color: var(--accent-text-strong);
+  background-color: var(--accent-subtle-bg);
+}
+
+.more-link-icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

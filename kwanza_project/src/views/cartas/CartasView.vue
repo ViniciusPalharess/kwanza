@@ -1,103 +1,75 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div class="page">
+    <div class="header">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Carta de Recomendação</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          Documento de destaque para vagas e oportunidades
-        </p>
+        <h1 class="title">Carta de Recomendação</h1>
+        <p class="subtitle">Documento de destaque para vagas e oportunidades</p>
       </div>
-      <select
-        v-model.number="selectedId"
-        class="border border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-white rounded-lg px-3 py-2 text-sm min-w-[200px]"
-      >
+      <select v-model.number="selectedId" class="select">
         <option v-for="p in pessoasStore.participants" :key="p.id" :value="p.id">
           {{ p.name }}
         </option>
       </select>
     </div>
 
-    <div
-      v-if="selected"
-      class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden max-w-3xl"
-    >
-      <div
-        class="h-24 bg-gradient-to-r from-brand-700 via-brand-600 to-brand-800 flex items-center justify-between px-6"
-      >
+    <div v-if="selected" class="letter">
+      <div class="letter-banner">
         <div>
-          <p class="text-white font-bold text-lg leading-tight">Kenia Club</p>
-          <p class="text-brand-100 text-sm">Projeto Kwanza</p>
+          <p class="letter-brand">Kenia Club</p>
+          <p class="letter-brand-sub">Projeto Kwanza</p>
         </div>
-        <FileText class="w-6 h-6 text-white/70" />
+        <file-text class="letter-banner-icon" />
       </div>
 
-      <div class="p-6 space-y-4">
-        <div class="flex items-center gap-3">
-          <div
-            class="w-12 h-12 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold shrink-0"
-          >
-            {{ selected.initials }}
-          </div>
+      <div class="letter-body">
+        <div class="person-row">
+          <div class="person-avatar">{{ selected.initials }}</div>
           <div>
-            <p class="font-bold text-slate-900 dark:text-white">{{ selected.name }}</p>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
+            <p class="person-name">{{ selected.name }}</p>
+            <p class="person-meta">
               Nível {{ selected.level }} · {{ selected.levelName || 'Copa' }} · 120h de formação
             </p>
           </div>
         </div>
 
-        <p class="font-bold text-slate-900 dark:text-white">A quem possa interessar,</p>
+        <p class="letter-greeting">A quem possa interessar,</p>
 
-        <p class="text-slate-700 dark:text-slate-300">
+        <p class="letter-text">
           É com grande satisfação que o <strong>Kenia Club</strong>, através do
           <strong>Projeto Kwanza</strong>, recomenda <strong>{{ selected.name }}</strong
           >, participante exemplar do nosso programa de desenvolvimento juvenil.
         </p>
 
-        <p class="text-slate-700 dark:text-slate-300">
+        <p class="letter-text">
           Ao longo de sua jornada, demonstrou notável evolução, acumulando
           <strong>{{ selected.score }} pontos</strong>, uma frequência de
           <strong>{{ selected.attendance }}%</strong> e destacando-se pelas seguintes competências:
         </p>
 
-        <div class="flex flex-wrap gap-2">
-          <span
-            v-for="skill in letterSkills"
-            :key="skill.name"
-            class="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300"
-          >
+        <div class="skills-row">
+          <span v-for="skill in letterSkills" :key="skill.name" class="skill-chip">
             {{ skill.name }} · {{ skill.value }}
           </span>
         </div>
 
-        <p class="text-slate-700 dark:text-slate-300">
+        <p class="letter-text">
           Trata-se de um(a) jovem comprometido(a), com forte espírito de liderança, comunicação
           clara e excelente trabalho em equipe. Recomendamos sem reservas para vagas de emprego,
           estágios e oportunidades de crescimento.
         </p>
 
-        <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
-          <p class="font-semibold text-slate-800 dark:text-slate-100">
-            Coordenação · Projeto Kwanza
-          </p>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Luanda, {{ dateLabel }}</p>
+        <div class="signature">
+          <p class="signature-title">Coordenação · Projeto Kwanza</p>
+          <p class="signature-date">Luanda, {{ dateLabel }}</p>
         </div>
       </div>
 
-      <div class="flex justify-end gap-3 px-6 pb-6">
-        <button
-          type="button"
-          class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-semibold px-4 py-2 rounded-lg text-sm"
-          @click="printLetter"
-        >
-          <Printer class="w-4 h-4" /> Imprimir
+      <div class="letter-actions">
+        <button type="button" class="action-button" @click="printLetter">
+          <printer class="action-icon" /> Imprimir
         </button>
-        <button
-          type="button"
-          class="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold px-4 py-2 rounded-lg text-sm"
-          @click="printLetter"
-        >
-          <Download class="w-4 h-4" /> Gerar PDF
+        <button type="button" class="action-button action-button--primary" @click="printLetter">
+          <download class="action-icon" /> Gerar PDF
         </button>
       </div>
     </div>
@@ -152,4 +124,193 @@ export default class CartasView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.select {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  min-width: 200px;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.letter {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  max-width: 48rem;
+}
+
+.letter-banner {
+  height: 6rem;
+  background: linear-gradient(
+    to right,
+    var(--color-brand-700),
+    var(--color-brand-600),
+    var(--color-brand-800)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.letter-brand {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.25;
+}
+
+.letter-brand-sub {
+  color: var(--color-brand-100);
+  font-size: 0.875rem;
+}
+
+.letter-banner-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: rgb(255 255 255 / 0.7);
+}
+
+.letter-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.person-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background-color: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.person-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.person-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.letter-greeting {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.letter-text {
+  color: var(--text-secondary);
+}
+
+.skills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background-color: var(--accent-subtle-bg);
+  color: var(--accent-text-strong);
+}
+
+.signature {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.signature-title {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.signature-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.letter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.action-button--primary {
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+}
+.action-button--primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.action-icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

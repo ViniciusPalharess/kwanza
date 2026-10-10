@@ -1,53 +1,24 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-  >
-    <h2 class="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white mb-4">
-      <Building2 class="w-5 h-5 text-brand-600" /> Dados da instituição
-    </h2>
-    <div class="flex items-center gap-3 mb-4">
-      <div
-        class="w-12 h-12 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold"
-      >
-        KC
-      </div>
-      <button
-        type="button"
-        class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm font-semibold px-3 py-1.5 rounded-lg"
-      >
-        <Upload class="w-4 h-4" /> Alterar logo
+  <div class="card">
+    <h2 class="title"><building-2 class="title-icon" /> Dados da instituição</h2>
+    <div class="logo-row">
+      <div class="logo-box">KC</div>
+      <button type="button" class="upload-button">
+        <upload class="upload-icon" /> Alterar logo
       </button>
     </div>
-    <div class="space-y-3">
+    <div class="fields">
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Nome</label
-        >
-        <input
-          v-model="institution.name"
-          type="text"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        />
+        <label class="label">Nome</label>
+        <input v-model="institution.name" type="text" class="input" />
       </div>
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Projeto</label
-        >
-        <input
-          v-model="institution.project"
-          type="text"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        />
+        <label class="label">Projeto</label>
+        <input v-model="institution.project" type="text" class="input" />
       </div>
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >E-mail de contato</label
-        >
-        <input
-          v-model="institution.email"
-          type="email"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        />
+        <label class="label">E-mail de contato</label>
+        <input v-model="institution.email" type="email" class="input" />
       </div>
     </div>
   </div>
@@ -67,4 +38,87 @@ export default class DadosInstituicaoView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.title-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--accent);
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.logo-box {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  background-color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+}
+
+.upload-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.upload-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+</style>

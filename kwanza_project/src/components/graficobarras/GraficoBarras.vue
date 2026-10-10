@@ -1,5 +1,5 @@
 <template>
-  <svg :viewBox="`0 0 ${width} ${height}`" class="w-full h-auto">
+  <svg :viewBox="`0 0 ${width} ${height}`" class="chart">
     <line
       v-for="line in gridLines"
       :key="line.value"
@@ -7,7 +7,7 @@
       :x2="width - padding.right"
       :y1="line.y"
       :y2="line.y"
-      class="stroke-slate-200 dark:stroke-slate-700"
+      class="grid-line"
       stroke-width="1"
     />
     <text
@@ -17,7 +17,7 @@
       :y="line.y + 3"
       text-anchor="end"
       font-size="9"
-      class="fill-slate-400 dark:fill-slate-500"
+      class="axis-label"
     >
       {{ line.value }}
     </text>
@@ -40,7 +40,7 @@
       :y="height - 6"
       text-anchor="middle"
       font-size="9"
-      class="fill-slate-400 dark:fill-slate-500"
+      class="axis-label"
     >
       {{ label }}
     </text>
@@ -118,4 +118,17 @@ export default class GraficoBarras extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.chart {
+  width: 100%;
+  height: auto;
+}
+
+.grid-line {
+  stroke: var(--chart-grid);
+}
+
+.axis-label {
+  fill: var(--text-faint);
+}
+</style>

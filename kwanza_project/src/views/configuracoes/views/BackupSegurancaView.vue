@@ -1,27 +1,10 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 lg:col-span-2"
-  >
-    <h2 class="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white mb-2">
-      <DatabaseBackup class="w-5 h-5 text-brand-600" /> Backup & Segurança
-    </h2>
-    <p class="text-sm text-brand-600 dark:text-brand-400 mb-4">
-      Último backup: {{ lastBackup }} · Auditoria ativa
-    </p>
-    <div class="flex gap-3">
-      <button
-        type="button"
-        class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm font-semibold px-4 py-2 rounded-lg"
-        @click="$emit('fazerBackup')"
-      >
-        Fazer backup
-      </button>
-      <button
-        type="button"
-        class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm font-semibold px-4 py-2 rounded-lg"
-      >
-        Restaurar
-      </button>
+  <div class="card">
+    <h2 class="title"><database-backup class="title-icon" /> Backup & Segurança</h2>
+    <p class="subtitle">Último backup: {{ lastBackup }} · Auditoria ativa</p>
+    <div class="actions">
+      <button type="button" class="button" @click="$emit('fazerBackup')">Fazer backup</button>
+      <button type="button" class="button">Restaurar</button>
     </div>
   </div>
 </template>
@@ -41,4 +24,57 @@ export default class BackupSegurancaView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+  grid-column: span 1;
+}
+@media (min-width: 1024px) {
+  .card {
+    grid-column: span 2 / span 2;
+  }
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.title-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--accent);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--accent-text);
+  margin-bottom: 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+</style>

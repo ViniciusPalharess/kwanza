@@ -1,63 +1,42 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col overflow-hidden"
-  >
-    <div class="h-28 bg-gradient-to-br from-brand-500 to-brand-800 relative">
-      <div v-if="editable" class="absolute top-2 right-2 flex gap-1">
-        <button
-          type="button"
-          class="w-7 h-7 rounded-lg bg-white/90 text-slate-600 flex items-center justify-center hover:bg-white"
-          @click="$emit('edit')"
-        >
-          <Pencil class="w-3.5 h-3.5" />
+  <div class="card">
+    <div class="banner">
+      <div v-if="editable" class="banner-actions">
+        <button type="button" class="banner-button" @click="$emit('edit')">
+          <pencil class="banner-icon" />
         </button>
-        <button
-          type="button"
-          class="w-7 h-7 rounded-lg bg-white/90 text-red-500 flex items-center justify-center hover:bg-white"
-          @click="$emit('delete')"
-        >
-          <Trash2 class="w-3.5 h-3.5" />
+        <button type="button" class="banner-button banner-button--danger" @click="$emit('delete')">
+          <trash-2 class="banner-icon" />
         </button>
       </div>
     </div>
-    <div class="p-4 flex flex-col gap-2 flex-1">
-      <span
-        class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide"
-        >{{ course.category }}</span
-      >
-      <h3 class="font-bold text-slate-900 dark:text-white">{{ course.title }}</h3>
-      <p class="text-sm text-slate-500 dark:text-slate-400 flex-1">{{ course.description }}</p>
-      <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+    <div class="body">
+      <span class="category">{{ course.category }}</span>
+      <h3 class="title">{{ course.title }}</h3>
+      <p class="description">{{ course.description }}</p>
+      <div class="meta">
         <span>{{ course.teacher }}</span>
-        <span class="flex items-center gap-1"
-          ><Clock class="w-3.5 h-3.5" /> {{ course.hours }}h</span
-        >
+        <span class="meta-hours"><clock class="meta-icon" /> {{ course.hours }}h</span>
       </div>
 
       <template v-if="course.progress > 0">
-        <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+        <div class="progress-row">
           <span>Progresso</span>
-          <span class="font-semibold text-slate-700 dark:text-slate-200"
-            >{{ course.progress }}%</span
-          >
+          <span class="progress-value">{{ course.progress }}%</span>
         </div>
-        <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-          <div class="h-full bg-brand-600 rounded-full" :style="{ width: course.progress + '%' }" />
+        <div class="track">
+          <div class="fill" :style="{ width: course.progress + '%' }" />
         </div>
       </template>
 
-      <RouterLink
+      <router-link
         :to="{ name: 'detalheCurso', params: { id: course.id } }"
-        class="mt-2 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition"
-        :class="
-          course.status === 'completed'
-            ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-            : 'bg-brand-600 text-white hover:bg-brand-700'
-        "
+        class="cta"
+        :class="course.status === 'completed' ? 'cta--completed' : 'cta--default'"
       >
-        <component :is="statusIcon[course.status]" class="w-4 h-4" />
+        <component :is="statusIcon[course.status]" class="cta-icon" />
         {{ statusLabel[course.status] }}
-      </RouterLink>
+      </router-link>
     </div>
   </div>
 </template>
@@ -95,4 +74,154 @@ export default class CartaoCurso extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.banner {
+  height: 7rem;
+  background: linear-gradient(to bottom right, var(--color-brand-500), var(--color-brand-800));
+  position: relative;
+}
+
+.banner-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.banner-button {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  background-color: rgb(255 255 255 / 0.9);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.banner-button:hover {
+  background-color: #fff;
+}
+.banner-button--danger {
+  color: var(--danger-text);
+}
+
+.banner-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.title {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.meta-hours {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.meta-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.progress-value {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--surface-muted);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--accent);
+}
+
+.cta {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.15s ease;
+}
+
+.cta--default {
+  background-color: var(--color-brand-600);
+}
+.cta--default:hover {
+  background-color: var(--color-brand-700);
+}
+
+.cta--completed {
+  background-color: var(--color-emerald-600);
+}
+.cta--completed:hover {
+  background-color: var(--color-emerald-700);
+}
+
+.cta-icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

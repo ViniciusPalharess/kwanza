@@ -1,77 +1,42 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div class="page">
+    <div class="header">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Relatórios</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Análises e indicadores do projeto</p>
+        <h1 class="title">Relatórios</h1>
+        <p class="subtitle">Análises e indicadores do projeto</p>
       </div>
-      <div class="flex gap-2">
-        <button
-          type="button"
-          class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800"
-        >
-          <FileText class="w-4 h-4" /> PDF
-        </button>
-        <button
-          type="button"
-          class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800"
-        >
-          <Sheet class="w-4 h-4" /> Excel
-        </button>
+      <div class="header-actions">
+        <button type="button" class="export-button"><file-text class="export-icon" /> PDF</button>
+        <button type="button" class="export-button"><sheet class="export-icon" /> Excel</button>
       </div>
     </div>
 
-    <div
-      class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-wrap items-center gap-3"
-    >
-      <span class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mr-1"
-        >Filtros:</span
-      >
-      <button
-        v-for="filter in filters"
-        :key="filter"
-        type="button"
-        class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300"
-      >
-        {{ filter }} <ChevronDown class="w-3.5 h-3.5" />
+    <div class="filters-bar">
+      <span class="filters-label">Filtros:</span>
+      <button v-for="filter in filters" :key="filter" type="button" class="filter-chip">
+        {{ filter }} <chevron-down class="filter-chip-icon" />
       </button>
     </div>
 
-    <div class="grid sm:grid-cols-2 gap-6">
-      <div
-        class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-      >
-        <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">
-          Distribuição de participantes
-        </h2>
-        <GraficoRosca :segments="reportDistribution" />
+    <div class="charts-grid">
+      <div class="card">
+        <h2 class="card-title">Distribuição de participantes</h2>
+        <grafico-rosca :segments="reportDistribution" />
       </div>
 
-      <div
-        class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-      >
-        <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">
-          Inscrições por categoria
-        </h2>
-        <GraficoRosca :segments="reportEnrollments" :donut="false" />
+      <div class="card">
+        <h2 class="card-title">Inscrições por categoria</h2>
+        <grafico-rosca :segments="reportEnrollments" :donut="false" />
       </div>
 
-      <div
-        class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-      >
-        <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">
-          Evolução de XP × Frequência
-        </h2>
-        <GraficoLinha :labels="xpEvolutionMonths" :series="xpSeries" />
+      <div class="card">
+        <h2 class="card-title">Evolução de XP × Frequência</h2>
+        <grafico-linha :labels="xpEvolutionMonths" :series="xpSeries" />
       </div>
 
-      <div
-        class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-      >
-        <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">
-          Horas acumuladas por mês
-        </h2>
-        <GraficoBarras :labels="xpEvolutionMonths" :values="reportHoursByMonth" color="#2563eb" />
+      <div class="card">
+        <h2 class="card-title">Horas acumuladas por mês</h2>
+        <grafico-barras :labels="xpEvolutionMonths" :values="reportHoursByMonth" color="#2563eb" />
       </div>
     </div>
   </div>
@@ -115,4 +80,116 @@ export default class RelatoriosView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  background-color: var(--surface);
+}
+
+.export-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.filters-bar {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filters-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-right: 0.25rem;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.filter-chip-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+@media (min-width: 640px) {
+  .charts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+</style>

@@ -1,9 +1,9 @@
 <template>
-  <div class="space-y-6">
-    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Frequência</h1>
+  <div class="page">
+    <h1 class="title">Frequência</h1>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-      <CalendarioFrequenciaView
+    <div class="layout">
+      <calendario-frequencia-view
         :week-days="weekDays"
         :days="days"
         :month-label="monthLabel"
@@ -17,7 +17,7 @@
         @selecionar-dia="selectDay"
       />
 
-      <ListaPresencaView
+      <lista-presenca-view
         :has-data-for-selected="hasDataForSelected"
         :selected-date-label="selectedDateLabel"
         :selected-day-summary="selectedDaySummary"
@@ -28,7 +28,7 @@
       />
     </div>
 
-    <DetalheFrequenciaModal
+    <detalhe-frequencia-modal
       v-if="selectedParticipant"
       :participant="selectedParticipant"
       :stats="participantStats"
@@ -231,4 +231,28 @@ export default class FrequenciaView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+</style>

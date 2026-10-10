@@ -1,9 +1,6 @@
 <template>
-  <span
-    class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold"
-    :class="classes"
-  >
-    <span class="w-1.5 h-1.5 rounded-full" :class="dot" />
+  <span class="badge" :class="variantClass">
+    <span class="dot" />
     {{ status }}
   </span>
 </template>
@@ -11,43 +8,82 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
 
+const VARIANT_BY_STATUS: Record<string, string> = {
+  Ativo: 'emerald',
+  Emitido: 'emerald',
+  Inativo: 'red',
+  Pendente: 'amber',
+  Elegível: 'brand',
+}
+
 @Component({})
 export default class SeloStatus extends Vue {
   // public
   @Prop({ type: String, required: true })
   public status!: string
 
-  // private
-  private stylesByStatus: Record<string, string> = {
-    Ativo: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600',
-    Emitido: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600',
-    Inativo: 'bg-red-50 dark:bg-red-500/10 text-red-500',
-    Pendente: 'bg-amber-50 dark:bg-amber-500/10 text-amber-600',
-    Elegível: 'bg-brand-50 dark:bg-brand-500/10 text-brand-600',
-  }
-
-  // private
-  private dotByStatus: Record<string, string> = {
-    Ativo: 'bg-emerald-500',
-    Emitido: 'bg-emerald-500',
-    Inativo: 'bg-red-500',
-    Pendente: 'bg-amber-500',
-    Elegível: 'bg-brand-500',
-  }
-
   // public
-  public get classes() {
-    return (
-      this.stylesByStatus[this.status] ||
-      'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-    )
-  }
-
-  // public
-  public get dot() {
-    return this.dotByStatus[this.status] || 'bg-slate-400'
+  public get variantClass() {
+    const variant = VARIANT_BY_STATUS[this.status] || 'slate'
+    return `badge--${variant}`
   }
 }
 </script>
 
-<style></style>
+<style scoped>
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+}
+
+.badge--emerald {
+  background-color: var(--success-subtle-bg);
+  color: var(--success-text);
+}
+.badge--emerald .dot {
+  background-color: var(--success-dot);
+}
+
+.badge--red {
+  background-color: var(--danger-subtle-bg);
+  color: var(--danger-text);
+}
+.badge--red .dot {
+  background-color: var(--danger-dot);
+}
+
+.badge--amber {
+  background-color: var(--warning-subtle-bg);
+  color: var(--warning-text);
+}
+.badge--amber .dot {
+  background-color: var(--warning-dot);
+}
+
+.badge--brand {
+  background-color: var(--accent-subtle-bg);
+  color: var(--accent-text);
+}
+.badge--brand .dot {
+  background-color: var(--color-brand-500);
+}
+
+.badge--slate {
+  background-color: var(--surface-muted);
+  color: var(--text-secondary);
+}
+.badge--slate .dot {
+  background-color: var(--text-faint);
+}
+</style>

@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <div class="flex justify-between text-sm mb-1">
-      <span class="text-slate-600 dark:text-slate-300">{{ name }}</span>
-      <span class="font-semibold text-slate-800 dark:text-slate-100">{{ value }}</span>
+  <div class="skill">
+    <div class="skill-header">
+      <span class="skill-name">{{ name }}</span>
+      <span class="skill-value">{{ value }}</span>
     </div>
-    <div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-      <div class="h-full rounded-full" :class="color" :style="{ width: value + '%' }" />
+    <div class="track">
+      <div class="fill" :style="{ width: value + '%' }" />
     </div>
   </div>
 </template>
@@ -21,10 +21,36 @@ export default class BarraCompetencia extends Vue {
   // public
   @Prop({ type: Number, required: true })
   public value!: number
-  // public
-  @Prop({ type: String, default: 'bg-brand-600' })
-  public color!: string
 }
 </script>
 
-<style></style>
+<style scoped>
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.skill-name {
+  color: var(--text-secondary);
+}
+
+.skill-value {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--surface-muted);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--accent);
+}
+</style>

@@ -1,83 +1,39 @@
 <template>
-  <Modal title="Registrar competência" @close="$emit('fechar')">
-    <form class="space-y-3" @submit.prevent="$emit('salvar')">
+  <modal title="Registrar competência" @close="$emit('fechar')">
+    <form class="form" @submit.prevent="$emit('salvar')">
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Participante</label
-        >
-        <input
-          v-model="form.name"
-          required
-          list="participant-options"
-          type="text"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        />
+        <label class="label">Participante</label>
+        <input v-model="form.name" required list="participant-options" type="text" class="input" />
         <datalist id="participant-options">
           <option v-for="name in participantNames" :key="name" :value="name" />
         </datalist>
       </div>
-      <div class="grid grid-cols-2 gap-3">
+      <div class="field-row">
         <div>
-          <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-            >Competência</label
-          >
-          <select
-            v-model="form.competency"
-            class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-          >
+          <label class="label">Competência</label>
+          <select v-model="form.competency" class="input">
             <option v-for="name in competencyNames" :key="name" :value="name">{{ name }}</option>
           </select>
         </div>
         <div>
-          <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-            >Data</label
-          >
-          <input
-            v-model="form.date"
-            type="text"
-            placeholder="dd/mm/aaaa"
-            class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-          />
+          <label class="label">Data</label>
+          <input v-model="form.date" type="text" placeholder="dd/mm/aaaa" class="input" />
         </div>
       </div>
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Pontos</label
-        >
-        <input
-          v-model="form.points"
-          type="number"
-          min="0"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        />
+        <label class="label">Pontos</label>
+        <input v-model="form.points" type="number" min="0" class="input" />
       </div>
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Observação</label
-        >
-        <textarea
-          v-model="form.description"
-          rows="2"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        />
+        <label class="label">Observação</label>
+        <textarea v-model="form.description" rows="2" class="input" />
       </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-300"
-          @click="$emit('fechar')"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold"
-        >
-          Salvar
-        </button>
+      <div class="actions">
+        <button type="button" class="button-secondary" @click="$emit('fechar')">Cancelar</button>
+        <button type="submit" class="button-primary">Salvar</button>
       </div>
     </form>
-  </Modal>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -107,4 +63,60 @@ export default class RegistrarCompetenciaModal extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.button-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.button-primary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.button-primary:hover {
+  background-color: var(--accent-hover);
+}
+</style>

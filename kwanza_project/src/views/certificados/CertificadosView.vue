@@ -1,63 +1,58 @@
 <template>
-  <div class="space-y-6">
+  <div class="page">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Certificados</h1>
-      <p class="text-sm text-slate-500 dark:text-slate-400">
-        Emissão e acompanhamento de certificados
-      </p>
+      <h1 class="title">Certificados</h1>
+      <p class="subtitle">Emissão e acompanhamento de certificados</p>
     </div>
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <CartaoEstatistica
+    <div class="stats-grid">
+      <cartao-estatistica
         label="Emitidos"
         :value="certificateStats.issued"
         :icon="FileCheck"
-        icon-bg="bg-emerald-50 dark:bg-emerald-500/10"
-        icon-color="text-emerald-600"
+        variant="emerald"
       />
-      <CartaoEstatistica label="Elegíveis" :value="certificateStats.eligible" :icon="Star" />
-      <CartaoEstatistica
+      <cartao-estatistica label="Elegíveis" :value="certificateStats.eligible" :icon="Star" />
+      <cartao-estatistica
         label="Este mês"
         :value="certificateStats.thisMonth"
         :icon="CalendarDays"
       />
-      <CartaoEstatistica
+      <cartao-estatistica
         label="Carga média"
         :value="`${certificateStats.avgHours}h`"
         :icon="Clock3"
       />
     </div>
 
-    <div
-      class="rounded-2xl p-8 bg-gradient-to-br from-brand-700 via-brand-600 to-brand-900 text-white text-center relative overflow-hidden"
-    >
-      <Award class="w-10 h-10 mx-auto mb-3 text-amber-300" />
-      <h2 class="text-xl font-bold">Certificado de Conclusão</h2>
-      <p class="text-brand-100 text-sm mb-4">Kenia Club · Projeto Kwanza</p>
-      <p class="text-brand-50 max-w-lg mx-auto">
+    <div class="featured">
+      <award class="featured-icon" />
+      <h2 class="featured-title">Certificado de Conclusão</h2>
+      <p class="featured-subtitle">Kenia Club · Projeto Kwanza</p>
+      <p class="featured-text">
         Certificamos que <strong>{{ featuredCertificate.participant }}</strong> concluiu com êxito o
         curso <strong>{{ featuredCertificate.course }}</strong
         >, com carga horária de {{ featuredCertificate.hours }} horas.
       </p>
-      <div class="flex justify-center gap-3 mt-6">
+      <div class="featured-actions">
         <button
           type="button"
-          class="flex items-center gap-2 bg-white text-brand-700 font-semibold px-4 py-2 rounded-lg text-sm"
+          class="featured-button featured-button--light"
           @click="printCertificate"
         >
-          <Download class="w-4 h-4" /> Download PDF
+          <download class="featured-button-icon" /> Download PDF
         </button>
         <button
           type="button"
-          class="flex items-center gap-2 bg-white/10 border border-white/30 text-white font-semibold px-4 py-2 rounded-lg text-sm"
+          class="featured-button featured-button--outline"
           @click="printCertificate"
         >
-          <Eye class="w-4 h-4" /> Visualizar
+          <eye class="featured-button-icon" /> Visualizar
         </button>
       </div>
     </div>
 
-    <ListaCertificadosView
+    <lista-certificados-view
       :certificados="store.list"
       @criar="openCreate"
       @visualizar="openView"
@@ -65,7 +60,7 @@
       @excluir="askDelete"
     />
 
-    <FormularioCertificadoModal
+    <formulario-certificado-modal
       v-if="showForm"
       :view-only="viewOnly"
       :editing-id="editingId"
@@ -76,7 +71,7 @@
       @salvar="submitForm"
     />
 
-    <DialogoConfirmacao
+    <dialogo-confirmacao
       v-if="confirmDeleteId"
       message="Tem certeza que deseja excluir este certificado?"
       @confirm="confirmDelete"
@@ -204,4 +199,104 @@ export default class CertificadosView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.featured {
+  border-radius: 1rem;
+  padding: 2rem;
+  background: linear-gradient(
+    to bottom right,
+    var(--color-brand-700),
+    var(--color-brand-600),
+    var(--color-brand-900)
+  );
+  color: #fff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 auto 0.75rem;
+  color: var(--color-amber-300);
+}
+
+.featured-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.featured-subtitle {
+  color: var(--color-brand-100);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.featured-text {
+  color: var(--color-brand-50);
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.featured-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.featured-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.featured-button--light {
+  background-color: #fff;
+  color: var(--color-brand-700);
+}
+
+.featured-button--outline {
+  background-color: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.3);
+  color: #fff;
+}
+
+.featured-button-icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

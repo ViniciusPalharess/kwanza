@@ -1,17 +1,13 @@
 <template>
-  <LayoutAutenticacao>
-    <div class="text-center py-10" v-if="status === 'loading'">
-      <p class="text-slate-500">Confirmando sua conta...</p>
+  <layout-autenticacao>
+    <div v-if="status === 'loading'" class="state">
+      <p class="loading-text">Confirmando sua conta...</p>
     </div>
-    <div class="text-center py-10" v-else>
-      <p class="text-red-600 mb-4">
-        Não foi possível confirmar sua conta. O link pode ter expirado.
-      </p>
-      <RouterLink :to="{ name: 'cadastro' }" class="text-brand-700 font-semibold text-sm"
-        >Voltar para o login</RouterLink
-      >
+    <div v-else class="state">
+      <p class="error-text">Não foi possível confirmar sua conta. O link pode ter expirado.</p>
+      <router-link :to="{ name: 'cadastro' }" class="link">Voltar para o login</router-link>
     </div>
-  </LayoutAutenticacao>
+  </layout-autenticacao>
 </template>
 
 <script lang="ts">
@@ -55,4 +51,24 @@ export default class RetornoAutenticacaoView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.state {
+  text-align: center;
+  padding: 2.5rem 0;
+}
+
+.loading-text {
+  color: var(--color-slate-500);
+}
+
+.error-text {
+  color: var(--color-red-600);
+  margin-bottom: 1rem;
+}
+
+.link {
+  color: var(--accent-text-strong);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+</style>

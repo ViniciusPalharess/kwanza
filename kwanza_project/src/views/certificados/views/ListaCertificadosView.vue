@@ -1,55 +1,45 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700"
-  >
-    <div class="flex items-center justify-between px-5 pt-5">
-      <h2 class="font-bold text-lg text-slate-900 dark:text-white">Todos os certificados</h2>
-      <button
-        type="button"
-        class="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-3 py-1.5 rounded-lg transition"
-        @click="$emit('criar')"
-      >
-        <Plus class="w-4 h-4" /> Emitir
+  <div class="card">
+    <div class="header">
+      <h2 class="title">Todos os certificados</h2>
+      <button type="button" class="new-button" @click="$emit('criar')">
+        <plus class="new-icon" /> Emitir
       </button>
     </div>
 
-    <div class="overflow-x-auto mt-3">
-      <table class="w-full text-sm">
+    <div class="table-wrapper">
+      <table class="table">
         <thead>
-          <tr
-            class="text-left text-xs text-slate-400 uppercase border-y border-slate-100 dark:border-slate-700"
-          >
-            <th class="px-5 py-3 font-semibold">Participante</th>
-            <th class="px-5 py-3 font-semibold">Curso</th>
-            <th class="px-5 py-3 font-semibold">Carga</th>
-            <th class="px-5 py-3 font-semibold">Data</th>
-            <th class="px-5 py-3 font-semibold">Status</th>
-            <th class="px-5 py-3 font-semibold text-right">Ações</th>
+          <tr class="head-row">
+            <th class="head-cell">Participante</th>
+            <th class="head-cell">Curso</th>
+            <th class="head-cell">Carga</th>
+            <th class="head-cell">Data</th>
+            <th class="head-cell">Status</th>
+            <th class="head-cell align-right">Ações</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-          <tr v-for="cert in certificados" :key="cert.id">
-            <td class="px-5 py-3 font-semibold text-slate-800 dark:text-slate-100">
-              {{ cert.name }}
-            </td>
-            <td class="px-5 py-3 text-brand-600 dark:text-brand-400">{{ cert.course }}</td>
-            <td class="px-5 py-3 text-slate-600 dark:text-slate-300">{{ cert.hours }}h</td>
-            <td class="px-5 py-3 text-slate-500 dark:text-slate-400">{{ cert.date ?? '—' }}</td>
-            <td class="px-5 py-3"><SeloStatus :status="cert.status" /></td>
-            <td class="px-5 py-3">
-              <div class="flex items-center justify-end gap-3 text-slate-400">
+        <tbody>
+          <tr v-for="cert in certificados" :key="cert.id" class="row">
+            <td class="cell cell--name">{{ cert.name }}</td>
+            <td class="cell cell--course">{{ cert.course }}</td>
+            <td class="cell cell--muted">{{ cert.hours }}h</td>
+            <td class="cell cell--faint">{{ cert.date ?? '—' }}</td>
+            <td class="cell"><selo-status :status="cert.status" /></td>
+            <td class="cell">
+              <div class="row-actions">
+                <button type="button" class="icon-button" @click="$emit('visualizar', cert)">
+                  <eye class="icon" />
+                </button>
+                <button type="button" class="icon-button" @click="$emit('editar', cert)">
+                  <pencil class="icon" />
+                </button>
                 <button
                   type="button"
-                  class="hover:text-brand-600"
-                  @click="$emit('visualizar', cert)"
+                  class="icon-button icon-button--danger"
+                  @click="$emit('excluir', cert)"
                 >
-                  <Eye class="w-4 h-4" />
-                </button>
-                <button type="button" class="hover:text-brand-600" @click="$emit('editar', cert)">
-                  <Pencil class="w-4 h-4" />
-                </button>
-                <button type="button" class="hover:text-red-500" @click="$emit('excluir', cert)">
-                  <Trash2 class="w-4 h-4" />
+                  <trash-2 class="icon" />
                 </button>
               </div>
             </td>
@@ -76,4 +66,119 @@ export default class ListaCertificadosView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.25rem 0;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+}
+
+.new-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+.new-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.new-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+.table {
+  width: 100%;
+  font-size: 0.875rem;
+  border-collapse: collapse;
+}
+
+.head-row {
+  text-align: left;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.head-cell {
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.row {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.cell {
+  padding: 0.75rem 1.25rem;
+}
+
+.cell--name {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.cell--course {
+  color: var(--accent-text);
+}
+
+.cell--muted {
+  color: var(--text-secondary);
+}
+
+.cell--faint {
+  color: var(--text-muted);
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  color: var(--text-faint);
+}
+
+.icon-button:hover {
+  color: var(--accent-text);
+}
+.icon-button--danger:hover {
+  color: var(--danger-text);
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

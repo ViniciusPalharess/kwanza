@@ -1,47 +1,29 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm p-6"
-  >
-    <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-4">Ranking</h2>
+  <div class="card">
+    <h2 class="title">Ranking</h2>
 
-    <div v-if="podium[0]" class="flex justify-center items-end gap-6 mb-4">
+    <div v-if="podium[0]" class="podium">
       <button
         v-for="(person, index) in podiumOrder"
         :key="person.id"
         type="button"
-        class="flex flex-col items-center"
+        class="person"
         @click="$emit('selecionarParticipante', person)"
       >
-        <Crown v-if="podiumRank[index] === 1" class="w-5 h-5 text-amber-400 mb-1" />
-        <div class="relative">
-          <div
-            class="rounded-full bg-brand-600 text-white flex items-center justify-center font-bold"
-            :class="podiumRank[index] === 1 ? 'w-16 h-16 text-lg' : 'w-12 h-12 text-sm'"
-          >
+        <crown v-if="podiumRank[index] === 1" class="crown-icon" />
+        <div class="avatar-wrapper">
+          <div class="avatar" :class="{ 'avatar--first': podiumRank[index] === 1 }">
             {{ person.initials }}
           </div>
-          <span
-            class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[10px] font-bold flex items-center justify-center text-slate-600 dark:text-slate-200"
-          >
-            {{ podiumRank[index] }}
-          </span>
+          <span class="rank-badge">{{ podiumRank[index] }}</span>
         </div>
-        <p class="text-xs font-semibold text-center mt-2 text-slate-800 dark:text-slate-100">
-          {{ person.name }}
-        </p>
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          {{ levelFor(person.score).name }}
-        </p>
-        <p class="text-xs text-brand-600 dark:text-brand-400 font-bold">{{ person.score }} pts</p>
-        <div
-          class="w-16 rounded-t-lg bg-gradient-to-b from-brand-100 to-brand-50 dark:from-brand-800 dark:to-brand-900 mt-2"
-          :class="podiumHeights[index]"
-        />
+        <p class="name">{{ person.name }}</p>
+        <p class="level">{{ levelFor(person.score).name }}</p>
+        <p class="score">{{ person.score }} pts</p>
+        <div class="bar" :style="{ height: podiumHeights[index] }" />
       </button>
     </div>
-    <p v-else class="text-sm text-slate-400 dark:text-slate-500 text-center py-4">
-      Nenhum participante pontuado ainda.
-    </p>
+    <p v-else class="empty-text">Nenhum participante pontuado ainda.</p>
   </div>
 </template>
 
@@ -72,4 +54,113 @@ export default class PodioRankingView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  padding: 1.5rem;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crown-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-amber-400);
+  margin-bottom: 0.25rem;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background-color: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.avatar--first {
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.125rem;
+}
+
+.rank-badge {
+  position: absolute;
+  bottom: -0.25rem;
+  right: -0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.625rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 0.5rem;
+  color: var(--text-strong);
+}
+
+.level {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.score {
+  font-size: 0.75rem;
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.bar {
+  width: 4rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-image: linear-gradient(to bottom, var(--podium-bar-from), var(--podium-bar-to));
+  margin-top: 0.5rem;
+}
+
+.empty-text {
+  font-size: 0.875rem;
+  color: var(--text-faint);
+  text-align: center;
+  padding: 1rem 0;
+}
+</style>

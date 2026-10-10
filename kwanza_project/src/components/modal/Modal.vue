@@ -1,25 +1,18 @@
 <template>
-  <Teleport to="body">
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-slate-900/50" @click="$emit('close')" />
-      <div
-        class="relative bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full p-6 max-h-[90vh] overflow-y-auto"
-        :class="maxWidth"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white">{{ title }}</h2>
-          <button
-            type="button"
-            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-            @click="$emit('close')"
-          >
-            <X class="w-5 h-5" />
+  <teleport to="body">
+    <div class="overlay-wrapper">
+      <div class="overlay" @click="$emit('close')" />
+      <div class="dialog" :style="{ maxWidth }">
+        <div class="dialog-header">
+          <h2 class="dialog-title">{{ title }}</h2>
+          <button type="button" class="close-button" @click="$emit('close')">
+            <x class="close-icon" />
           </button>
         </div>
         <slot />
       </div>
     </div>
-  </Teleport>
+  </teleport>
 </template>
 
 <script lang="ts">
@@ -35,9 +28,65 @@ export default class Modal extends Vue {
   @Prop({ type: String, required: true })
   public title!: string
   // public
-  @Prop({ type: String, default: 'max-w-lg' })
+  @Prop({ type: String, default: '32rem' })
   public maxWidth!: string
 }
 </script>
 
-<style></style>
+<style scoped>
+.overlay-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(15 23 42 / 0.5);
+}
+
+.dialog {
+  position: relative;
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  width: 100%;
+  padding: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.dialog-title {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.close-button {
+  color: var(--text-faint);
+}
+
+.close-button:hover {
+  color: var(--text-secondary);
+}
+
+.close-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+</style>

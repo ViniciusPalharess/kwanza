@@ -1,45 +1,24 @@
 <template>
-  <Modal :title="editingUserId ? 'Editar usuário' : 'Adicionar usuário'" @close="$emit('fechar')">
-    <form class="space-y-3" @submit.prevent="$emit('salvar')">
+  <modal :title="editingUserId ? 'Editar usuário' : 'Adicionar usuário'" @close="$emit('fechar')">
+    <form class="form" @submit.prevent="$emit('salvar')">
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Nome</label
-        >
-        <input
-          v-model="form.name"
-          required
-          type="text"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        />
+        <label class="label">Nome</label>
+        <input v-model="form.name" required type="text" class="input" />
       </div>
       <div>
-        <label class="text-sm font-medium block mb-1 text-slate-600 dark:text-slate-300"
-          >Papel</label
-        >
-        <select
-          v-model="form.role"
-          class="w-full border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2"
-        >
+        <label class="label">Papel</label>
+        <select v-model="form.role" class="input">
           <option v-for="role in roleOptions" :key="role" :value="role">{{ role }}</option>
         </select>
       </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-300"
-          @click="$emit('fechar')"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold"
-        >
+      <div class="actions">
+        <button type="button" class="button-secondary" @click="$emit('fechar')">Cancelar</button>
+        <button type="submit" class="button-primary">
           {{ editingUserId ? 'Salvar' : 'Adicionar' }}
         </button>
       </div>
     </form>
-  </Modal>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -63,4 +42,54 @@ export default class FormularioUsuarioModal extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.button-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.button-primary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.button-primary:hover {
+  background-color: var(--accent-hover);
+}
+</style>

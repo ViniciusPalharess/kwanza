@@ -1,23 +1,17 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div class="page">
+    <div class="header">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Cursos</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          Trilhas de aprendizado e desenvolvimento
-        </p>
+        <h1 class="title">Cursos</h1>
+        <p class="subtitle">Trilhas de aprendizado e desenvolvimento</p>
       </div>
-      <button
-        type="button"
-        class="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
-        @click="openCreate"
-      >
-        <Plus class="w-4 h-4" /> Novo curso
+      <button type="button" class="new-button" @click="openCreate">
+        <plus class="new-icon" /> Novo curso
       </button>
     </div>
 
-    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      <CartaoCurso
+    <div class="grid">
+      <cartao-curso
         v-for="course in store.list"
         :key="course.id"
         :course="course"
@@ -27,7 +21,7 @@
       />
     </div>
 
-    <FormularioCursoModal
+    <formulario-curso-modal
       v-if="showForm"
       :editing-id="editingId"
       :form="form"
@@ -35,7 +29,7 @@
       @salvar="submitForm"
     />
 
-    <DialogoConfirmacao
+    <dialogo-confirmacao
       v-if="confirmDeleteId"
       :message="`Tem certeza que deseja excluir o curso ${confirmDeleteTitle}?`"
       @confirm="confirmDelete"
@@ -120,4 +114,71 @@ export default class CursosView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.new-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+.new-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.new-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+</style>

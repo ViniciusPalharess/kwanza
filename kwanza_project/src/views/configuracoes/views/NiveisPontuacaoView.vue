@@ -1,45 +1,26 @@
 <template>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-100 dark:border-slate-700"
-  >
-    <h2 class="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-white mb-4">
-      <Trophy class="w-5 h-5 text-brand-600" /> Pontuação & Níveis
-    </h2>
-    <ul class="space-y-2 mb-4">
-      <li
-        v-for="level in levels"
-        :key="level.id"
-        class="flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-900 rounded-lg px-3 py-2"
-      >
-        <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ level.name }}</span>
-        <div class="flex items-center gap-2">
-          <span
-            class="text-xs font-semibold bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300 px-2 py-0.5 rounded-full"
-            >{{ level.xp }}+ XP</span
-          >
-          <button
-            type="button"
-            class="text-slate-400 hover:text-brand-600"
-            @click="$emit('editar', level)"
-          >
-            <Pencil class="w-3.5 h-3.5" />
+  <div class="card">
+    <h2 class="title"><trophy class="title-icon" /> Pontuação & Níveis</h2>
+    <ul class="list">
+      <li v-for="level in levels" :key="level.id" class="row">
+        <span class="name">{{ level.name }}</span>
+        <div class="row-actions">
+          <span class="xp-badge">{{ level.xp }}+ XP</span>
+          <button type="button" class="icon-button" @click="$emit('editar', level)">
+            <pencil class="icon" />
           </button>
           <button
             type="button"
-            class="text-slate-400 hover:text-red-500"
+            class="icon-button icon-button--danger"
             @click="$emit('excluir', level)"
           >
-            <Trash2 class="w-3.5 h-3.5" />
+            <trash-2 class="icon" />
           </button>
         </div>
       </li>
     </ul>
-    <button
-      type="button"
-      class="w-full flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold py-2.5 rounded-lg transition"
-      @click="$emit('criar')"
-    >
-      <Plus class="w-4 h-4" /> Adicionar nível
+    <button type="button" class="add-button" @click="$emit('criar')">
+      <plus class="add-icon" /> Adicionar nível
     </button>
   </div>
 </template>
@@ -59,4 +40,104 @@ export default class NiveisPontuacaoView extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  background-color: var(--surface);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.title-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--accent);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background-color: var(--surface-sunken);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.xp-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--accent-subtle-bg);
+  color: var(--accent-text-strong);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.icon-button {
+  color: var(--text-faint);
+}
+.icon-button:hover {
+  color: var(--accent-text);
+}
+.icon-button--danger:hover {
+  color: var(--danger-text);
+}
+
+.icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.add-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+.add-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.add-icon {
+  width: 1rem;
+  height: 1rem;
+}
+</style>
