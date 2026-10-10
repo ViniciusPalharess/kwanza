@@ -2,8 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { useThemeStore } from './stores/theme'
-import { useUserStore } from './stores/user'
+import { useTemaStore } from './stores/tema'
+import { useUsuarioStore } from './stores/usuario'
 import './assets/main.css'
 
 const app = createApp(App)
@@ -11,9 +11,9 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-useThemeStore().init()
+useTemaStore().init()
 
-useUserStore()
+useUsuarioStore()
   .init()
   .finally(() => {
     app.mount('#app')

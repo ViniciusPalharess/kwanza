@@ -1,86 +1,86 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+import { useUsuarioStore } from '@/stores/usuario'
 
 const routes = [
   {
     path: '/',
-    name: 'login',
-    component: () => import('@/views/LoginView.vue'),
+    name: 'cadastro',
+    component: () => import('@/views/cadastro/CadastroView.vue'),
     meta: { public: true },
   },
   {
     path: '/criar-conta',
-    name: 'signup',
-    component: () => import('@/views/SignupView.vue'),
+    name: 'criarConta',
+    component: () => import('@/views/criarconta/CriarContaView.vue'),
     meta: { public: true },
   },
   {
-    path: '/auth/callback',
-    name: 'auth-callback',
-    component: () => import('@/views/AuthCallbackView.vue'),
+    path: '/retorno-autenticacao',
+    name: 'retornoAutenticacao',
+    component: () => import('@/views/retornoautenticacao/RetornoAutenticacaoView.vue'),
     meta: { public: true },
   },
   {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: () => import('@/views/DashboardView.vue'),
+    path: '/painel',
+    name: 'painel',
+    component: () => import('@/views/painel/PainelView.vue'),
   },
   {
-    path: '/participants',
-    name: 'participants',
-    component: () => import('@/views/ParticipantsView.vue'),
+    path: '/pessoas',
+    name: 'pessoas',
+    component: () => import('@/views/pessoas/PessoasView.vue'),
   },
   {
-    path: '/courses',
-    name: 'courses',
-    component: () => import('@/views/CoursesView.vue'),
+    path: '/cursos',
+    name: 'cursos',
+    component: () => import('@/views/cursos/CursosView.vue'),
   },
   {
-    path: '/courses/:id',
-    name: 'course-detail',
-    component: () => import('@/views/CourseDetailView.vue'),
+    path: '/cursos/:id',
+    name: 'detalheCurso',
+    component: () => import('@/views/cursos/views/DetalheCursoView.vue'),
     props: true,
   },
   {
-    path: '/content',
-    name: 'content',
-    component: () => import('@/views/ComingSoonView.vue'),
+    path: '/conteudos',
+    name: 'conteudos',
+    component: () => import('@/views/conteudos/ConteudosView.vue'),
     props: { title: 'Conteúdos' },
   },
   {
-    path: '/attendance',
-    name: 'attendance',
-    component: () => import('@/views/AttendanceView.vue'),
+    path: '/frequencia',
+    name: 'frequencia',
+    component: () => import('@/views/frequencia/FrequenciaView.vue'),
   },
   {
     path: '/ranking',
     name: 'ranking',
-    component: () => import('@/views/RankingView.vue'),
+    component: () => import('@/views/ranking/RankingView.vue'),
   },
   {
-    path: '/reports',
-    name: 'reports',
-    component: () => import('@/views/ReportsView.vue'),
+    path: '/relatorios',
+    name: 'relatorios',
+    component: () => import('@/views/relatorios/RelatoriosView.vue'),
   },
   {
-    path: '/certificates',
-    name: 'certificates',
-    component: () => import('@/views/CertificatesView.vue'),
+    path: '/certificados',
+    name: 'certificados',
+    component: () => import('@/views/certificados/CertificadosView.vue'),
   },
   {
-    path: '/cards',
-    name: 'cards',
-    component: () => import('@/views/CartasView.vue'),
+    path: '/cartas',
+    name: 'cartas',
+    component: () => import('@/views/cartas/CartasView.vue'),
   },
   {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('@/views/SettingsView.vue'),
+    path: '/configuracoes',
+    name: 'configuracoes',
+    component: () => import('@/views/configuracoes/ConfiguracoesView.vue'),
   },
   {
-    path: '/profile',
-    name: 'profile',
-    component: () => import('@/views/ProfileView.vue'),
+    path: '/perfil',
+    name: 'perfil',
+    component: () => import('@/views/perfil/PerfilView.vue'),
   },
 ]
 
@@ -91,9 +91,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const userStore = useUserStore()
-  if (false && !to.meta.public && !userStore.isAuthenticated) {
-    return { name: 'login' }
+  const usuarioStore = useUsuarioStore()
+  if (false && !to.meta.public && !usuarioStore.isAuthenticated) {
+    return { name: 'cadastro' }
   }
 })
 
