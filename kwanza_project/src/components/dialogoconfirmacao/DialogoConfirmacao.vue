@@ -9,10 +9,8 @@
         <h2 class="title">{{ title }}</h2>
         <p class="message">{{ message }}</p>
         <div class="actions">
-          <button type="button" class="button-secondary" @click="$emit('cancel')">Cancelar</button>
-          <button type="button" class="button-danger" @click="$emit('confirm')">
-            {{ confirmLabel }}
-          </button>
+          <botao :acao="AcaoBotao.cancelar" descricao="Cancelar" @click="$emit('cancel')" />
+          <botao :acao="AcaoBotao.excluir" :descricao="confirmLabel" @click="$emit('confirm')" />
         </div>
       </div>
     </div>
@@ -22,9 +20,11 @@
 <script lang="ts">
 import { AlertTriangle } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { AlertTriangle },
+  components: { AlertTriangle, Botao },
   emits: ['confirm', 'cancel'],
 })
 export default class DialogoConfirmacao extends Vue {
@@ -37,6 +37,9 @@ export default class DialogoConfirmacao extends Vue {
   // public
   @Prop({ type: String, default: 'Excluir' })
   public confirmLabel!: string
+
+  // public
+  public AcaoBotao = AcaoBotao
 }
 </script>
 
@@ -104,26 +107,5 @@ export default class DialogoConfirmacao extends Vue {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-}
-
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.button-danger {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--danger);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.button-danger:hover {
-  background-color: var(--danger-hover);
 }
 </style>

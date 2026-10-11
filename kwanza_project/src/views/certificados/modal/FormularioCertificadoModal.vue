@@ -6,55 +6,50 @@
     @close="$emit('fechar')"
   >
     <form class="form" @submit.prevent="$emit('salvar')">
-      <div class="field">
-        <label class="label">Participante</label>
-        <input
-          v-model="form.name"
-          :disabled="viewOnly"
-          required
-          list="cert-participant-options"
-          type="text"
-          class="input"
-        />
-        <datalist id="cert-participant-options">
-          <option v-for="name in participantNames" :key="name" :value="name" />
-        </datalist>
-      </div>
-      <div class="field">
-        <label class="label">Curso</label>
-        <input
-          v-model="form.course"
-          :disabled="viewOnly"
-          required
-          list="cert-course-options"
-          type="text"
-          class="input"
-        />
-        <datalist id="cert-course-options">
-          <option v-for="title in courseTitles" :key="title" :value="title" />
-        </datalist>
-      </div>
+      <campo-texto
+        label="Participante"
+        v-model="form.name"
+        :desabilitado="viewOnly"
+        obrigatorio
+        lista="cert-participant-options"
+      />
+      <datalist id="cert-participant-options">
+        <option v-for="name in participantNames" :key="name" :value="name" />
+      </datalist>
+
+      <campo-texto
+        label="Curso"
+        v-model="form.course"
+        :desabilitado="viewOnly"
+        obrigatorio
+        lista="cert-course-options"
+      />
+      <datalist id="cert-course-options">
+        <option v-for="title in courseTitles" :key="title" :value="title" />
+      </datalist>
+
       <div class="field-row">
-        <div class="field">
-          <label class="label">Carga (h)</label>
-          <input v-model="form.hours" :disabled="viewOnly" type="number" min="1" class="input" />
-        </div>
-        <div class="field">
-          <label class="label">Status</label>
-          <select v-model="form.status" :disabled="viewOnly" class="input">
-            <option>Emitido</option>
-            <option>Elegível</option>
-            <option>Pendente</option>
-          </select>
-        </div>
+        <campo-texto
+          label="Carga (h)"
+          v-model="form.hours"
+          :desabilitado="viewOnly"
+          tipo="number"
+          min="1"
+        />
+        <campo-lista label="Status" v-model="form.status" :desabilitado="viewOnly" :opcoes="opcoesStatus" />
       </div>
       <div class="actions">
-        <button type="button" class="button-secondary" @click="$emit('fechar')">
-          {{ viewOnly ? 'Fechar' : 'Cancelar' }}
-        </button>
-        <button v-if="!viewOnly" type="submit" class="button-primary">
-          {{ editingId ? 'Salvar alterações' : 'Emitir certificado' }}
-        </button>
+        <botao
+          :acao="AcaoBotao.cancelar"
+          :descricao="viewOnly ? 'Fechar' : 'Cancelar'"
+          @click="$emit('fechar')"
+        />
+        <botao
+          v-if="!viewOnly"
+          :acao="AcaoBotao.salvar"
+          tipo="submit"
+          :descricao="editingId ? 'Salvar alterações' : 'Emitir certificado'"
+        />
       </div>
     </form>
   </modal>
@@ -62,13 +57,19 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoLista from '@/components/campolista/CampoLista.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
 import Modal from '@/components/modal/Modal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Modal },
+  components: { Modal, Botao, CampoTexto, CampoLista },
   emits: ['salvar', 'fechar'],
 })
 export default class FormularioCertificadoModal extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Boolean, default: false })
   public viewOnly!: boolean
@@ -84,6 +85,11 @@ export default class FormularioCertificadoModal extends Vue {
   // public
   @Prop({ type: Array, required: true })
   public courseTitles!: string[]
+
+  // public
+  public get opcoesStatus() {
+    return ['Emitido', 'Elegível', 'Pendente'].map((status) => ({ valor: status, texto: status }))
+  }
 }
 </script>
 
@@ -100,50 +106,10 @@ export default class FormularioCertificadoModal extends Vue {
   gap: 0.75rem;
 }
 
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-secondary);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-}
-.input:disabled {
-  opacity: 0.6;
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.5rem;
-}
-
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.button-primary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.button-primary:hover {
-  background-color: var(--accent-hover);
 }
 </style>

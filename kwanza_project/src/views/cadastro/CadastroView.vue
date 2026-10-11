@@ -8,10 +8,7 @@
     <p class="subtitle">Continue a sua jornada de evolução.</p>
 
     <form class="form" @submit.prevent="handleSubmit">
-      <div class="field">
-        <label class="label" for="email">E-mail</label>
-        <input id="email" v-model="email" type="email" class="input" placeholder="voce@email.com" />
-      </div>
+      <campo-texto label="E-mail" v-model="email" tipo="email" placeholder="voce@email.com" />
       <div class="field">
         <label class="label" for="password">Senha</label>
         <input
@@ -25,9 +22,14 @@
 
       <a href="#" class="forgot-link">Esqueci minha senha</a>
 
-      <button type="submit" :disabled="loading" class="submit-button">
-        {{ loading ? 'Entrando...' : 'Entrar' }}
-      </button>
+      <botao
+        :acao="AcaoBotao.salvar"
+        tipo="submit"
+        largura-total
+        :carregando="loading"
+        descricao="Entrar"
+        descricao-carregando="Entrando..."
+      />
     </form>
 
     <p class="footer-text">
@@ -43,12 +45,17 @@ import { Component, Vue } from 'vue-facing-decorator'
 import { useUsuarioStore } from '@/stores/usuario'
 import { useToastStore } from '@/stores/toast'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import Botao from '@/components/botao/Botao.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import LayoutAutenticacao from '@/components/layoutautenticacao/LayoutAutenticacao.vue'
 
 @Component({
-  components: { LayoutAutenticacao, RouterLink },
+  components: { LayoutAutenticacao, RouterLink, Botao, CampoTexto },
 })
 export default class CadastroView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public isSupabaseConfigured = isSupabaseConfigured
   // public
@@ -134,22 +141,6 @@ export default class CadastroView extends Vue {
   color: var(--accent-text);
   display: block;
   text-align: right;
-}
-
-.submit-button {
-  width: 100%;
-  background-color: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  padding: 0.625rem 0;
-  border-radius: 0.5rem;
-  transition: background-color 0.15s ease;
-}
-.submit-button:hover {
-  background-color: var(--accent-hover);
-}
-.submit-button:disabled {
-  opacity: 0.6;
 }
 
 .footer-text {

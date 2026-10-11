@@ -1,12 +1,11 @@
 <template>
   <modal title="Destaques por competência" @close="$emit('fechar')">
-    <select
-      :value="highlightCompetency"
+    <campo-lista
       class="select"
-      @change="$emit('selecionarCompetencia', ($event.target as HTMLSelectElement).value)"
-    >
-      <option v-for="name in competencyNames" :key="name" :value="name">{{ name }}</option>
-    </select>
+      :model-value="highlightCompetency"
+      :opcoes="opcoesCompetencia"
+      @update:model-value="$emit('selecionarCompetencia', $event)"
+    />
     <ul class="list">
       <li v-for="(item, index) in highlights" :key="item.name" class="row">
         <span>{{ medals[index] }}</span>
@@ -22,10 +21,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import CampoLista from '@/components/campolista/CampoLista.vue'
 import Modal from '@/components/modal/Modal.vue'
 
 @Component({
-  components: { Modal },
+  components: { Modal, CampoLista },
   emits: ['fechar', 'selecionarCompetencia'],
 })
 export default class VisaoGeralDestaquesModal extends Vue {
@@ -41,18 +41,16 @@ export default class VisaoGeralDestaquesModal extends Vue {
   // public
   @Prop({ type: Array, required: true })
   public medals!: string[]
+
+  // public
+  public get opcoesCompetencia() {
+    return this.competencyNames.map((name) => ({ valor: name, texto: name }))
+  }
 }
 </script>
 
 <style scoped>
 .select {
-  width: 100%;
-  font-size: 0.875rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
   margin-bottom: 1rem;
 }
 

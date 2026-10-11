@@ -6,34 +6,44 @@
         <span class="name">{{ level.name }}</span>
         <div class="row-actions">
           <span class="xp-badge">{{ level.xp }}+ XP</span>
-          <button type="button" class="icon-button" @click="$emit('editar', level)">
-            <pencil class="icon" />
-          </button>
-          <button
-            type="button"
+          <botao
+            :acao="AcaoBotao.outro"
+            somente-icone
+            class="icon-button"
+            @click="$emit('editar', level)"
+          >
+            <template #icone><pencil class="icon" /></template>
+          </botao>
+          <botao
+            :acao="AcaoBotao.excluir"
+            somente-icone
             class="icon-button icon-button--danger"
             @click="$emit('excluir', level)"
           >
-            <trash-2 class="icon" />
-          </button>
+            <template #icone><trash-2 class="icon" /></template>
+          </botao>
         </div>
       </li>
     </ul>
-    <button type="button" class="add-button" @click="$emit('criar')">
-      <plus class="add-icon" /> Adicionar nível
-    </button>
+    <botao :acao="AcaoBotao.adicionar" largura-total descricao="Adicionar nível" @click="$emit('criar')">
+      <template #icone><plus class="add-icon" /></template>
+    </botao>
   </div>
 </template>
 
 <script lang="ts">
 import { Trophy, Pencil, Trash2, Plus } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Trophy, Pencil, Trash2, Plus },
+  components: { Trophy, Pencil, Trash2, Plus, Botao },
   emits: ['criar', 'editar', 'excluir'],
 })
 export default class NiveisPontuacaoView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Array, required: true })
   public levels!: Array<{ id: number; name: string; xp: number }>
@@ -103,9 +113,6 @@ export default class NiveisPontuacaoView extends Vue {
   border-radius: 9999px;
 }
 
-.icon-button {
-  color: var(--text-faint);
-}
 .icon-button:hover {
   color: var(--accent-text);
 }
@@ -116,24 +123,6 @@ export default class NiveisPontuacaoView extends Vue {
 .icon {
   width: 0.875rem;
   height: 0.875rem;
-}
-
-.add-button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.625rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.15s ease;
-}
-.add-button:hover {
-  background-color: var(--accent-hover);
 }
 
 .add-icon {

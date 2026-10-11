@@ -3,8 +3,8 @@
     <h2 class="title"><database-backup class="title-icon" /> Backup & Segurança</h2>
     <p class="subtitle">Último backup: {{ lastBackup }} · Auditoria ativa</p>
     <div class="actions">
-      <button type="button" class="button" @click="$emit('fazerBackup')">Fazer backup</button>
-      <button type="button" class="button">Restaurar</button>
+      <botao :acao="AcaoBotao.outro" descricao="Fazer backup" @click="$emit('fazerBackup')" />
+      <botao :acao="AcaoBotao.outro" descricao="Restaurar" />
     </div>
   </div>
 </template>
@@ -12,12 +12,16 @@
 <script lang="ts">
 import { DatabaseBackup } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { DatabaseBackup },
+  components: { DatabaseBackup, Botao },
   emits: ['fazerBackup'],
 })
 export default class BackupSegurancaView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: String, required: true })
   public lastBackup!: string
@@ -64,17 +68,5 @@ export default class BackupSegurancaView extends Vue {
 .actions {
   display: flex;
   gap: 0.75rem;
-}
-
-.button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
 }
 </style>

@@ -10,9 +10,16 @@
         >
           <component :is="iconFor(toast.type)" class="toast-icon" />
           <p class="toast-message">{{ toast.message }}</p>
-          <button type="button" class="toast-dismiss" @click="toastStore.dismiss(toast.id)">
-            <x class="toast-dismiss-icon" />
-          </button>
+          <botao
+            :acao="AcaoBotao.fechar"
+            somente-icone
+            class="toast-dismiss"
+            @click="toastStore.dismiss(toast.id)"
+          >
+            <template #icone>
+              <x class="toast-dismiss-icon" />
+            </template>
+          </botao>
         </div>
       </transition-group>
     </div>
@@ -22,10 +29,12 @@
 <script lang="ts">
 import { CheckCircle2, X, XCircle } from 'lucide-vue-next'
 import { Component, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import { useToastStore } from '@/stores/toast'
 
 @Component({
-  components: { X },
+  components: { X, Botao },
 })
 export default class Toast extends Vue {
   // public
@@ -33,6 +42,9 @@ export default class Toast extends Vue {
     success: { icon: CheckCircle2 },
     error: { icon: XCircle },
   }
+
+  // public
+  public AcaoBotao = AcaoBotao
 
   // public
   public toastStore = useToastStore()

@@ -18,30 +18,15 @@
     </div>
 
     <form class="form" @submit.prevent="handleSave">
-      <div class="field">
-        <label class="label">Nome completo</label>
-        <input v-model="form.name" type="text" class="input" />
-      </div>
-      <div class="field">
-        <label class="label">E-mail</label>
-        <input v-model="form.email" type="email" class="input" />
-      </div>
-      <div class="field">
-        <label class="label">Telefone</label>
-        <input v-model="form.phone" type="tel" class="input" />
-      </div>
-      <div class="field">
-        <label class="label">Data de nascimento</label>
-        <input v-model="form.birthDate" type="date" class="input" />
-      </div>
-      <div class="field">
-        <label class="label">Sobre mim</label>
-        <textarea v-model="form.bio" rows="3" class="input" />
-      </div>
+      <campo-texto label="Nome completo" v-model="form.name" />
+      <campo-texto label="E-mail" v-model="form.email" tipo="email" />
+      <campo-texto label="Telefone" v-model="form.phone" tipo="tel" />
+      <campo-texto label="Data de nascimento" v-model="form.birthDate" tipo="date" />
+      <campo-texto label="Sobre mim" v-model="form.bio" multilinha :linhas="3" />
 
       <div class="actions">
-        <button type="button" class="button-secondary" @click="$emit('close')">Cancelar</button>
-        <button type="submit" class="button-primary">Salvar alterações</button>
+        <botao :acao="AcaoBotao.cancelar" descricao="Cancelar" @click="$emit('close')" />
+        <botao :acao="AcaoBotao.salvar" tipo="submit" descricao="Salvar alterações" />
       </div>
     </form>
   </modal>
@@ -50,16 +35,21 @@
 <script lang="ts">
 import { Camera } from 'lucide-vue-next'
 import { Component, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
 import { useUsuarioStore } from '@/stores/usuario'
 import { useToastStore } from '@/stores/toast'
 import Modal from '@/components/modal/Modal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import defaultAvatar from '@/assets/images/default-avatar.png'
 
 @Component({
-  components: { Modal, Camera },
+  components: { Modal, Camera, Botao, CampoTexto },
   emits: ['close'],
 })
 export default class PerfilModal extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public defaultAvatar = defaultAvatar
 
@@ -163,51 +153,10 @@ export default class PerfilModal extends Vue {
   gap: 0.75rem;
 }
 
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-secondary);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-}
-.input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--color-brand-200);
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.5rem;
-}
-
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.button-primary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--color-brand-600);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.button-primary:hover {
-  background-color: var(--color-brand-700);
 }
 </style>

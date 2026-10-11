@@ -2,12 +2,17 @@
   <div class="card">
     <div class="banner">
       <div v-if="editable" class="banner-actions">
-        <button type="button" class="banner-button" @click="$emit('edit')">
-          <pencil class="banner-icon" />
-        </button>
-        <button type="button" class="banner-button banner-button--danger" @click="$emit('delete')">
-          <trash-2 class="banner-icon" />
-        </button>
+        <botao :acao="AcaoBotao.outro" somente-icone class="banner-button" @click="$emit('edit')">
+          <template #icone><pencil class="banner-icon" /></template>
+        </botao>
+        <botao
+          :acao="AcaoBotao.excluir"
+          somente-icone
+          class="banner-button banner-button--danger"
+          @click="$emit('delete')"
+        >
+          <template #icone><trash-2 class="banner-icon" /></template>
+        </botao>
       </div>
     </div>
     <div class="body">
@@ -45,12 +50,16 @@
 import { RouterLink } from 'vue-router'
 import { Clock, RotateCw, CheckCircle2, Play, Pencil, Trash2 } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { RouterLink, Clock, Pencil, Trash2 },
+  components: { RouterLink, Clock, Pencil, Trash2, Botao },
   emits: ['edit', 'delete'],
 })
 export default class CartaoCurso extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Object, required: true })
   public course!: any
@@ -100,20 +109,17 @@ export default class CartaoCurso extends Vue {
 }
 
 .banner-button {
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 0.5rem;
-  background-color: rgb(255 255 255 / 0.9);
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  border-radius: 0.5rem !important;
+  background-color: rgb(255 255 255 / 0.9) !important;
+  color: var(--text-secondary) !important;
 }
 .banner-button:hover {
-  background-color: #fff;
+  background-color: #fff !important;
 }
 .banner-button--danger {
-  color: var(--danger-text);
+  color: var(--danger-text) !important;
 }
 
 .banner-icon {

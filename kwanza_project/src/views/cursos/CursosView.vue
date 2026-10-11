@@ -5,9 +5,9 @@
         <h1 class="title">Cursos</h1>
         <p class="subtitle">Trilhas de aprendizado e desenvolvimento</p>
       </div>
-      <button type="button" class="new-button" @click="openCreate">
-        <plus class="new-icon" /> Novo curso
-      </button>
+      <botao :acao="AcaoBotao.adicionar" descricao="Novo curso" @click="openCreate">
+        <template #icone><plus class="new-icon" /></template>
+      </botao>
     </div>
 
     <div class="grid">
@@ -42,9 +42,11 @@
 import { Plus } from 'lucide-vue-next'
 import { Component, Vue } from 'vue-facing-decorator'
 import { useCursosStore } from '@/stores/cursos'
+import Botao from '@/components/botao/Botao.vue'
 import CartaoCurso from '@/components/cartaocurso/CartaoCurso.vue'
 import DialogoConfirmacao from '@/components/dialogoconfirmacao/DialogoConfirmacao.vue'
 import FormularioCursoModal from '@/views/cursos/modal/FormularioCursoModal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 const emptyForm = () => ({
   title: '',
@@ -57,9 +59,11 @@ const emptyForm = () => ({
 })
 
 @Component({
-  components: { CartaoCurso, DialogoConfirmacao, FormularioCursoModal, Plus },
+  components: { CartaoCurso, DialogoConfirmacao, FormularioCursoModal, Plus, Botao },
 })
 export default class CursosView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public showForm = false
   // public
@@ -143,22 +147,6 @@ export default class CursosView extends Vue {
 .subtitle {
   font-size: 0.875rem;
   color: var(--text-muted);
-}
-
-.new-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.15s ease;
-}
-.new-button:hover {
-  background-color: var(--accent-hover);
 }
 
 .new-icon {

@@ -53,17 +53,13 @@
       <hr class="divider" />
 
       <div v-if="!showHistory" class="footer-actions">
-        <button
+        <botao
           v-if="canEditScore"
-          type="button"
-          class="button-secondary"
+          :acao="AcaoBotao.cancelar"
+          descricao="+ Registrar competência"
           @click="$emit('registrarCompetencia', participant)"
-        >
-          + Registrar competência
-        </button>
-        <button type="button" class="button-primary" @click="showHistory = true">
-          Ver histórico
-        </button>
+        />
+        <botao :acao="AcaoBotao.salvar" descricao="Ver histórico" @click="showHistory = true" />
       </div>
 
       <div v-else>
@@ -88,13 +84,17 @@
 <script lang="ts">
 import { TrendingUp } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
 import Modal from '@/components/modal/Modal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Modal, TrendingUp },
+  components: { Modal, TrendingUp, Botao },
   emits: ['fechar', 'registrarCompetencia'],
 })
 export default class DetalheParticipanteModal extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Object, required: true })
   public participant!: any
@@ -250,26 +250,6 @@ export default class DetalheParticipanteModal extends Vue {
   gap: 0.5rem;
 }
 
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.button-primary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.button-primary:hover {
-  background-color: var(--accent-hover);
-}
 
 .history-list {
   display: flex;

@@ -5,9 +5,11 @@
       <div class="dialog" :style="{ maxWidth }">
         <div class="dialog-header">
           <h2 class="dialog-title">{{ title }}</h2>
-          <button type="button" class="close-button" @click="$emit('close')">
-            <x class="close-icon" />
-          </button>
+          <botao :acao="AcaoBotao.fechar" somente-icone @click="$emit('close')">
+            <template #icone>
+              <x class="close-icon" />
+            </template>
+          </botao>
         </div>
         <slot />
       </div>
@@ -18,9 +20,11 @@
 <script lang="ts">
 import { X } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { X },
+  components: { X, Botao },
   emits: ['close'],
 })
 export default class Modal extends Vue {
@@ -30,6 +34,9 @@ export default class Modal extends Vue {
   // public
   @Prop({ type: String, default: '32rem' })
   public maxWidth!: string
+
+  // public
+  public AcaoBotao = AcaoBotao
 }
 </script>
 
@@ -75,14 +82,6 @@ export default class Modal extends Vue {
   line-height: 1.75rem;
   font-weight: 700;
   color: var(--text-primary);
-}
-
-.close-button {
-  color: var(--text-faint);
-}
-
-.close-button:hover {
-  color: var(--text-secondary);
 }
 
 .close-icon {

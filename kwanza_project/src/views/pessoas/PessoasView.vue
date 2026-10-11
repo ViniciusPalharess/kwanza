@@ -9,23 +9,18 @@
       <div class="toolbar">
         <div class="search-field">
           <search class="search-icon" />
-          <input
-            v-model="search"
-            type="text"
-            placeholder="Pesquisar por nome ou e-mail..."
-            class="search-input"
-          />
+          <campo-texto v-model="search" placeholder="Pesquisar por nome ou e-mail..." />
         </div>
-        <button type="button" class="add-button" @click="openCreate">
-          <user-plus class="add-icon" /> Adicionar pessoa
-        </button>
+        <botao :acao="AcaoBotao.adicionar" descricao="Adicionar pessoa" @click="openCreate">
+          <template #icone><user-plus class="add-icon" /></template>
+        </botao>
       </div>
 
       <div class="tabs">
-        <button
+        <botao
           v-for="tab in tabs"
           :key="tab.label"
-          type="button"
+          :acao="AcaoBotao.outro"
           class="tab"
           :class="{ 'tab--active': roleFilter === tab.label }"
           @click="selectRoleFilter(tab.label)"
@@ -34,7 +29,7 @@
           <span class="tab-count" :class="{ 'tab-count--active': roleFilter === tab.label }">{{
             tab.count
           }}</span>
-        </button>
+        </botao>
       </div>
 
       <lista-pessoas-view
@@ -49,12 +44,18 @@
     <div class="pagination">
       <span class="pagination-label">Página {{ page }} de {{ totalPages }}</span>
       <div class="pagination-actions">
-        <button type="button" class="page-button" :disabled="page === 1" @click="goPrev">
-          Anterior
-        </button>
-        <button type="button" class="page-button" :disabled="page === totalPages" @click="goNext">
-          Próxima
-        </button>
+        <botao
+          :acao="AcaoBotao.cancelar"
+          :desabilitado="page === 1"
+          descricao="Anterior"
+          @click="goPrev"
+        />
+        <botao
+          :acao="AcaoBotao.cancelar"
+          :desabilitado="page === totalPages"
+          descricao="Próxima"
+          @click="goNext"
+        />
       </div>
     </div>
 
@@ -84,6 +85,9 @@ import { usePessoasStore } from '@/stores/pessoas'
 import DialogoConfirmacao from '@/components/dialogoconfirmacao/DialogoConfirmacao.vue'
 import ListaPessoasView from '@/views/pessoas/views/ListaPessoasView.vue'
 import FormularioPessoaModal from '@/views/pessoas/modal/FormularioPessoaModal.vue'
+import Botao from '@/components/botao/Botao.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 const PAGE_SIZE = 8
 
@@ -98,9 +102,19 @@ const emptyForm = () => ({
 })
 
 @Component({
-  components: { DialogoConfirmacao, ListaPessoasView, FormularioPessoaModal, UserPlus, Search },
+  components: {
+    DialogoConfirmacao,
+    ListaPessoasView,
+    FormularioPessoaModal,
+    UserPlus,
+    Search,
+    Botao,
+    CampoTexto,
+  },
 })
 export default class PessoasView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public roleOptions = ['Participante', 'Administrador', 'Professor']
   // public
@@ -302,36 +316,8 @@ export default class PessoasView extends Vue {
   transform: translateY(-50%);
 }
 
-.search-input {
-  width: 100%;
+.search-field :deep(.campo-texto__input) {
   padding: 0.5rem 0.75rem 0.5rem 2.25rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-  font-size: 0.875rem;
-}
-.search-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--color-brand-200);
-}
-
-.add-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  flex-shrink: 0;
-  transition: background-color 0.15s ease;
-}
-.add-button:hover {
-  background-color: var(--accent-hover);
 }
 
 .add-icon {
@@ -345,24 +331,29 @@ export default class PessoasView extends Vue {
   gap: 0.5rem;
 }
 
-.tab {
-  display: flex;
-  align-items: center;
+.tab :deep(.botao__descricao) {
   gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  background-color: var(--surface-muted);
-  transition: background-color 0.15s ease;
 }
-.tab:hover {
-  background-color: var(--surface-hover);
+
+.tab {
+  gap: 0.375rem !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary) !important;
+  background-color: var(--surface-muted) !important;
+  border-color: transparent !important;
+}
+.tab:hover:not(:disabled) {
+  background-color: var(--surface-hover) !important;
 }
 .tab--active {
-  background-color: var(--accent);
-  color: #fff;
+  background-color: var(--accent) !important;
+  color: #fff !important;
+}
+.tab--active:hover:not(:disabled) {
+  background-color: var(--accent) !important;
 }
 
 .tab-count {
@@ -389,15 +380,5 @@ export default class PessoasView extends Vue {
 .pagination-actions {
   display: flex;
   gap: 0.5rem;
-}
-
-.page-button {
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-}
-.page-button:disabled {
-  opacity: 0.4;
 }
 </style>

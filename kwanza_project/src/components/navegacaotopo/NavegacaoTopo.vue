@@ -8,14 +8,16 @@
       <div class="actions">
         <!-- Menu do usuário -->
         <div class="user-menu" @mouseenter="showUserMenu = true" @mouseleave="showUserMenu = false">
-          <button type="button" class="user-trigger" @click="showUserMenu = !showUserMenu">
-            <img
-              :src="usuarioStore.user.avatarUrl || defaultAvatar"
-              alt="Foto de perfil"
-              class="avatar"
-            />
+          <botao :acao="AcaoBotao.texto" class="user-trigger" @click="showUserMenu = !showUserMenu">
+            <template #icone>
+              <img
+                :src="usuarioStore.user.avatarUrl || defaultAvatar"
+                alt="Foto de perfil"
+                class="avatar"
+              />
+            </template>
             <p class="user-name">{{ usuarioStore.user.name }}</p>
-          </button>
+          </botao>
 
           <template v-if="showUserMenu">
             <div class="dropdown">
@@ -79,10 +81,12 @@
           </template>
         </div>
 
-        <button type="button" class="icon-button" title="Notificações">
-          <bell class="icon" />
-          <span class="notification-dot"></span>
-        </button>
+        <botao :acao="AcaoBotao.outro" somente-icone class="icon-button" title="Notificações">
+          <template #icone>
+            <bell class="icon" />
+            <span class="notification-dot"></span>
+          </template>
+        </botao>
 
         <router-link
           :to="{ name: 'configuracoes' }"
@@ -95,14 +99,17 @@
 
         <!-- Opções de tela -->
         <div class="more-wrapper">
-          <button
-            type="button"
+          <botao
+            :acao="AcaoBotao.outro"
+            somente-icone
             class="icon-button"
             title="Mais opções"
             @click="showMore = !showMore"
           >
-            <more-vertical class="icon" />
-          </button>
+            <template #icone>
+              <more-vertical class="icon" />
+            </template>
+          </botao>
 
           <template v-if="showMore">
             <div class="backdrop" @click="showMore = false" />
@@ -150,12 +157,15 @@ import {
 } from 'lucide-vue-next'
 import { Component, Vue } from 'vue-facing-decorator'
 import { useUsuarioStore } from '@/stores/usuario'
+import Botao from '@/components/botao/Botao.vue'
 import PerfilModal from '@/components/perfil/PerfilModal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import defaultAvatar from '@/assets/images/default-avatar.png'
 
 @Component({
   components: {
     RouterLink,
+    Botao,
     PerfilModal,
     Settings,
     MoreVertical,
@@ -168,6 +178,8 @@ import defaultAvatar from '@/assets/images/default-avatar.png'
   },
 })
 export default class NavegacaoTopo extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public defaultAvatar = defaultAvatar
 
@@ -260,10 +272,8 @@ export default class NavegacaoTopo extends Vue {
 }
 
 .user-trigger {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-left: 0.25rem;
+  gap: 0.5rem !important;
+  padding: 0 0 0 0.25rem !important;
 }
 
 .avatar {
@@ -447,7 +457,7 @@ export default class NavegacaoTopo extends Vue {
   position: relative;
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 0.5rem;
+  border-radius: 0.5rem !important;
   display: flex;
   align-items: center;
   justify-content: center;

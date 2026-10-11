@@ -3,25 +3,28 @@
     <h2 class="title">Ranking</h2>
 
     <div v-if="podium[0]" class="podium">
-      <button
+      <botao
         v-for="(person, index) in podiumOrder"
         :key="person.id"
-        type="button"
+        :acao="AcaoBotao.texto"
+        somente-icone
         class="person"
         @click="$emit('selecionarParticipante', person)"
       >
-        <crown v-if="podiumRank[index] === 1" class="crown-icon" />
-        <div class="avatar-wrapper">
-          <div class="avatar" :class="{ 'avatar--first': podiumRank[index] === 1 }">
-            {{ person.initials }}
+        <template #icone>
+          <crown v-if="podiumRank[index] === 1" class="crown-icon" />
+          <div class="avatar-wrapper">
+            <div class="avatar" :class="{ 'avatar--first': podiumRank[index] === 1 }">
+              {{ person.initials }}
+            </div>
+            <span class="rank-badge">{{ podiumRank[index] }}</span>
           </div>
-          <span class="rank-badge">{{ podiumRank[index] }}</span>
-        </div>
-        <p class="name">{{ person.name }}</p>
-        <p class="level">{{ levelFor(person.score).name }}</p>
-        <p class="score">{{ person.score }} pts</p>
-        <div class="bar" :style="{ height: podiumHeights[index] }" />
-      </button>
+          <p class="name">{{ person.name }}</p>
+          <p class="level">{{ levelFor(person.score).name }}</p>
+          <p class="score">{{ person.score }} pts</p>
+          <div class="bar" :style="{ height: podiumHeights[index] }" />
+        </template>
+      </botao>
     </div>
     <p v-else class="empty-text">Nenhum participante pontuado ainda.</p>
   </div>
@@ -30,12 +33,16 @@
 <script lang="ts">
 import { Crown } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Crown },
+  components: { Crown, Botao },
   emits: ['selecionarParticipante'],
 })
 export default class PodioRankingView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Array, required: true })
   public podium!: any[]
@@ -79,9 +86,13 @@ export default class PodioRankingView extends Vue {
 }
 
 .person {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
 }
 
 .crown-icon {
