@@ -2,9 +2,9 @@
   <div class="card">
     <div class="header">
       <h2 class="title"><users class="title-icon" /> Usuários & Permissões</h2>
-      <button type="button" class="add-button" @click="$emit('criar')">
-        <plus class="add-icon" /> Adicionar
-      </button>
+      <botao :acao="AcaoBotao.adicionar" descricao="Adicionar" @click="$emit('criar')">
+        <template #icone><plus class="add-icon" /></template>
+      </botao>
     </div>
     <ul class="list">
       <li v-for="user in users" :key="user.id" class="row">
@@ -16,16 +16,22 @@
         <span class="role-badge" :class="`role-badge--${roleColors[user.role]}`">{{
           user.role
         }}</span>
-        <button type="button" class="icon-button" @click="$emit('editar', user)">
-          <pencil class="icon" />
-        </button>
-        <button
-          type="button"
+        <botao
+          :acao="AcaoBotao.outro"
+          somente-icone
+          class="icon-button"
+          @click="$emit('editar', user)"
+        >
+          <template #icone><pencil class="icon" /></template>
+        </botao>
+        <botao
+          :acao="AcaoBotao.excluir"
+          somente-icone
           class="icon-button icon-button--danger"
           @click="$emit('excluir', user)"
         >
-          <trash-2 class="icon" />
-        </button>
+          <template #icone><trash-2 class="icon" /></template>
+        </botao>
       </li>
     </ul>
   </div>
@@ -34,12 +40,16 @@
 <script lang="ts">
 import { Users, Pencil, Trash2, Plus } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Users, Pencil, Trash2, Plus },
+  components: { Users, Pencil, Trash2, Plus, Botao },
   emits: ['criar', 'editar', 'excluir'],
 })
 export default class UsuariosPermissoesView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Array, required: true })
   public users!: Array<{ id: number; name: string; initials: string; role: string }>
@@ -78,15 +88,6 @@ export default class UsuariosPermissoesView extends Vue {
   width: 1.25rem;
   height: 1.25rem;
   color: var(--accent);
-}
-
-.add-button {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: var(--accent-text);
-  font-size: 0.875rem;
-  font-weight: 600;
 }
 
 .add-icon {
@@ -169,9 +170,6 @@ export default class UsuariosPermissoesView extends Vue {
   color: var(--text-secondary);
 }
 
-.icon-button {
-  color: var(--text-faint);
-}
 .icon-button:hover {
   color: var(--accent-text);
 }

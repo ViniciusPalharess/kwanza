@@ -8,18 +8,26 @@
       <h2 class="choice-title">Criar sua conta</h2>
 
       <div class="choice-list">
-        <button type="button" class="choice-button" @click="step = 'form'">
-          <mail class="choice-icon" />
+        <botao :acao="AcaoBotao.outro" class="choice-button" @click="step = 'form'">
+          <template #icone><mail class="choice-icon" /></template>
           <span class="choice-label">Continuar com E-mail</span>
-        </button>
-        <button type="button" disabled class="choice-button choice-button--disabled">
-          <icone-google class="choice-icon" />
+        </botao>
+        <botao
+          :acao="AcaoBotao.outro"
+          desabilitado
+          class="choice-button choice-button--disabled"
+        >
+          <template #icone><icone-google class="choice-icon" /></template>
           <span class="choice-label">Continuar com Google</span>
-        </button>
-        <button type="button" disabled class="choice-button choice-button--disabled">
-          <icone-microsoft class="choice-icon" />
+        </botao>
+        <botao
+          :acao="AcaoBotao.outro"
+          desabilitado
+          class="choice-button choice-button--disabled"
+        >
+          <template #icone><icone-microsoft class="choice-icon" /></template>
           <span class="choice-label">Continuar com Microsoft</span>
-        </button>
+        </botao>
       </div>
 
       <p class="choice-footer">
@@ -29,25 +37,13 @@
     </template>
 
     <template v-else-if="step === 'form'">
-      <button type="button" class="back-button" @click="step = 'choice'">← Voltar</button>
+      <botao :acao="AcaoBotao.texto" class="back-button" descricao="← Voltar" @click="step = 'choice'" />
       <h2 class="title">Criar conta com e-mail</h2>
       <p class="subtitle">Leva menos de um minuto.</p>
 
       <form class="form" @submit.prevent="handleSignup">
-        <div class="field">
-          <label class="label" for="name">Nome</label>
-          <input id="name" v-model="name" type="text" class="input" placeholder="Seu nome" />
-        </div>
-        <div class="field">
-          <label class="label" for="email">E-mail</label>
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            class="input"
-            placeholder="voce@email.com"
-          />
-        </div>
+        <campo-texto label="Nome" v-model="name" placeholder="Seu nome" />
+        <campo-texto label="E-mail" v-model="email" tipo="email" placeholder="voce@email.com" />
         <div class="field">
           <label class="label" for="password">Senha</label>
           <input
@@ -59,9 +55,14 @@
           />
         </div>
 
-        <button type="submit" :disabled="loading" class="submit-button">
-          {{ loading ? 'Criando conta...' : 'Criar conta' }}
-        </button>
+        <botao
+          :acao="AcaoBotao.salvar"
+          tipo="submit"
+          largura-total
+          :carregando="loading"
+          descricao="Criar conta"
+          descricao-carregando="Criando conta..."
+        />
       </form>
     </template>
 
@@ -88,14 +89,27 @@ import { Component, Vue } from 'vue-facing-decorator'
 import { useUsuarioStore } from '@/stores/usuario'
 import { useToastStore } from '@/stores/toast'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import Botao from '@/components/botao/Botao.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import LayoutAutenticacao from '@/components/layoutautenticacao/LayoutAutenticacao.vue'
 import IconeGoogle from '@/components/icones/IconeGoogle.vue'
 import IconeMicrosoft from '@/components/icones/IconeMicrosoft.vue'
 
 @Component({
-  components: { LayoutAutenticacao, IconeGoogle, IconeMicrosoft, Mail, RouterLink },
+  components: {
+    LayoutAutenticacao,
+    IconeGoogle,
+    IconeMicrosoft,
+    Mail,
+    RouterLink,
+    Botao,
+    CampoTexto,
+  },
 })
 export default class CriarContaView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public isSupabaseConfigured = isSupabaseConfigured
   // public
@@ -167,23 +181,20 @@ export default class CriarContaView extends Vue {
 }
 
 .choice-button {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--color-slate-200);
-  border-radius: 0.5rem;
-  padding: 0.625rem 1rem;
-  transition: background-color 0.15s ease;
-  font-weight: 500;
-  color: #616161;
+  position: relative !important;
+  width: 100% !important;
+  border: 1px solid var(--color-slate-200) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.625rem 1rem !important;
+  font-weight: 500 !important;
+  color: #616161 !important;
+  background-color: transparent !important;
 }
-.choice-button:hover {
-  background-color: var(--color-slate-50);
+.choice-button:hover:not(:disabled) {
+  background-color: var(--color-slate-50) !important;
 }
 .choice-button--disabled {
   opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .choice-icon {
@@ -212,12 +223,12 @@ export default class CriarContaView extends Vue {
 }
 
 .back-button {
-  font-size: 0.875rem;
-  color: var(--color-slate-400);
-  margin-bottom: 1rem;
+  margin-bottom: 1rem !important;
+  padding: 0 !important;
+  color: var(--color-slate-400) !important;
 }
-.back-button:hover {
-  color: var(--color-slate-600);
+.back-button:hover:not(:disabled) {
+  color: var(--color-slate-600) !important;
 }
 
 .title {
@@ -255,22 +266,6 @@ export default class CriarContaView extends Vue {
 .input:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--color-brand-300);
-}
-
-.submit-button {
-  width: 100%;
-  background-color: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  padding: 0.625rem 0;
-  border-radius: 0.5rem;
-  transition: background-color 0.15s ease;
-}
-.submit-button:hover {
-  background-color: var(--accent-hover);
-}
-.submit-button:disabled {
-  opacity: 0.6;
 }
 
 .sent-wrapper {

@@ -3,23 +3,14 @@
     <h2 class="title"><building-2 class="title-icon" /> Dados da instituição</h2>
     <div class="logo-row">
       <div class="logo-box">KC</div>
-      <button type="button" class="upload-button">
-        <upload class="upload-icon" /> Alterar logo
-      </button>
+      <botao :acao="AcaoBotao.outro" descricao="Alterar logo">
+        <template #icone><upload class="upload-icon" /></template>
+      </botao>
     </div>
     <div class="fields">
-      <div>
-        <label class="label">Nome</label>
-        <input v-model="institution.name" type="text" class="input" />
-      </div>
-      <div>
-        <label class="label">Projeto</label>
-        <input v-model="institution.project" type="text" class="input" />
-      </div>
-      <div>
-        <label class="label">E-mail de contato</label>
-        <input v-model="institution.email" type="email" class="input" />
-      </div>
+      <campo-texto label="Nome" v-model="institution.name" />
+      <campo-texto label="Projeto" v-model="institution.project" />
+      <campo-texto label="E-mail de contato" v-model="institution.email" tipo="email" />
     </div>
   </div>
 </template>
@@ -27,11 +18,16 @@
 <script lang="ts">
 import { Building2, Upload } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Building2, Upload },
+  components: { Building2, Upload, Botao, CampoTexto },
 })
 export default class DadosInstituicaoView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Object, required: true })
   public institution!: { name: string; project: string; email: string }
@@ -82,18 +78,6 @@ export default class DadosInstituicaoView extends Vue {
   font-weight: 700;
 }
 
-.upload-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-}
-
 .upload-icon {
   width: 1rem;
   height: 1rem;
@@ -103,22 +87,5 @@ export default class DadosInstituicaoView extends Vue {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-secondary);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
 }
 </style>
