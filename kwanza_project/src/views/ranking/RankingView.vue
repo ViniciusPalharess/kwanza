@@ -6,19 +6,20 @@
         <p class="subtitle">A jornada de evolução dos participantes do Projeto Kwanza</p>
       </div>
       <div class="controls">
-        <select v-model="period" class="period-select">
-          <option>{{ period }}</option>
-        </select>
+        <campo-lista class="period-select" v-model="period" :opcoes="opcoesPeriodo" />
 
         <div class="menu-wrapper">
-          <button
-            type="button"
+          <botao
+            :acao="AcaoBotao.outro"
+            somente-icone
             class="menu-button"
             title="Visões gerais do período"
             @click="showMenu = !showMenu"
           >
-            <more-vertical class="menu-icon" />
-          </button>
+            <template #icone>
+              <more-vertical class="menu-icon" />
+            </template>
+          </botao>
 
           <template v-if="showMenu">
             <div class="backdrop" @click="showMenu = false" />
@@ -108,6 +109,9 @@ import { competencyCategories } from '@/data/dadosSimulados'
 import { usePessoasStore } from '@/stores/pessoas'
 import { useCompetenciasStore } from '@/stores/competencias'
 import { useConfiguracoesStore } from '@/stores/configuracoes'
+import Botao from '@/components/botao/Botao.vue'
+import CampoLista from '@/components/campolista/CampoLista.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import PodioRankingView from '@/views/ranking/views/PodioRankingView.vue'
 import ListaParticipantesRankingView from '@/views/ranking/views/ListaParticipantesRankingView.vue'
 import DetalheParticipanteModal from '@/views/ranking/modal/DetalheParticipanteModal.vue'
@@ -136,9 +140,13 @@ function parseDate(str: string) {
     MoreVertical,
     BarChart2,
     Star,
+    Botao,
+    CampoLista,
   },
 })
 export default class RankingView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public competencyNames = competencyCategories.map((c) => c.name)
 
@@ -196,6 +204,11 @@ export default class RankingView extends Vue {
 
   // Ranking: sempre derivado da pontuação atual dos participantes,
   // recalculado automaticamente (getter reativo, sem botão manual).
+  // public
+  public get opcoesPeriodo() {
+    return [{ valor: this.period, texto: this.period }]
+  }
+
   // public
   public get ranking() {
     return this.participantsStore.sortedByScore
@@ -408,33 +421,12 @@ export default class RankingView extends Vue {
   gap: 0.5rem;
 }
 
-.period-select {
-  font-size: 0.875rem;
+.period-select :deep(.campo-lista__select) {
   font-weight: 600;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
 }
 
 .menu-wrapper {
   position: relative;
-}
-
-.menu-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  transition: background-color 0.15s ease;
-}
-.menu-button:hover {
-  background-color: var(--surface-hover);
 }
 
 .menu-icon {

@@ -40,16 +40,22 @@
       </div>
       <span v-else class="muted">—</span>
       <div class="row-actions">
-        <button type="button" class="icon-button" @click.stop="$emit('editar', person)">
-          <pencil class="icon" />
-        </button>
-        <button
-          type="button"
+        <botao
+          :acao="AcaoBotao.outro"
+          somente-icone
+          class="icon-button"
+          @click.stop="$emit('editar', person)"
+        >
+          <template #icone><pencil class="icon" /></template>
+        </botao>
+        <botao
+          :acao="AcaoBotao.excluir"
+          somente-icone
           class="icon-button icon-button--danger"
           @click.stop="$emit('excluir', person)"
         >
-          <trash-2 class="icon" />
-        </button>
+          <template #icone><trash-2 class="icon" /></template>
+        </botao>
       </div>
     </div>
   </div>
@@ -58,14 +64,18 @@
 <script lang="ts">
 import { Pencil, Trash2 } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import { emailFor } from '@/data/dadosSimulados'
 import defaultAvatar from '@/assets/images/default-avatar.png'
 
 @Component({
-  components: { Pencil, Trash2 },
+  components: { Pencil, Trash2, Botao },
   emits: ['visualizar', 'editar', 'excluir'],
 })
 export default class ListaPessoasView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Array, required: true })
   public pessoas!: any[]

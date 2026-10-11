@@ -5,22 +5,21 @@
       <div class="actions">
         <div class="search-wrapper">
           <search class="search-icon" />
-          <input
-            :value="search"
-            type="text"
+          <campo-texto
+            class="search-field"
+            :model-value="search"
             placeholder="Buscar participante"
-            class="search-input"
-            @input="$emit('pesquisar', ($event.target as HTMLInputElement).value)"
+            @update:model-value="$emit('pesquisar', $event)"
           />
         </div>
-        <button
+        <botao
           v-if="canEditScore"
-          type="button"
-          class="register-button"
+          :acao="AcaoBotao.adicionar"
+          descricao="Registrar competência"
           @click="$emit('registrarCompetencia', null)"
         >
-          <plus class="register-icon" /> Registrar competência
-        </button>
+          <template #icone><plus class="register-icon" /></template>
+        </botao>
       </div>
     </div>
 
@@ -70,12 +69,17 @@
 <script lang="ts">
 import { Search, Plus } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Search, Plus },
+  components: { Search, Plus, Botao, CampoTexto },
   emits: ['pesquisar', 'registrarCompetencia', 'selecionarParticipante'],
 })
 export default class ListaParticipantesRankingView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Array, required: true })
   public participantes!: any[]
@@ -152,32 +156,11 @@ export default class ListaParticipantesRankingView extends Vue {
   left: 0.625rem;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 1;
 }
 
-.search-input {
+.search-field :deep(.campo-texto__input) {
   padding: 0.375rem 0.75rem 0.375rem 2rem;
-  font-size: 0.875rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-}
-
-.register-button {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  white-space: nowrap;
-  transition: background-color 0.15s ease;
-}
-.register-button:hover {
-  background-color: var(--accent-hover);
 }
 
 .register-icon {

@@ -28,17 +28,20 @@
           </div>
         </div>
 
-        <button
-          type="button"
+        <botao
+          :acao="AcaoBotao.salvar"
+          largura-total
           class="cta"
-          :class="course.status === 'completed' ? 'cta--completed' : 'cta--default'"
+          :class="course.status === 'completed' ? 'cta--completed' : ''"
         >
-          <component
-            :is="course.status === 'completed' ? CheckCircle2 : RotateCw"
-            class="cta-icon"
-          />
+          <template #icone>
+            <component
+              :is="course.status === 'completed' ? CheckCircle2 : RotateCw"
+              class="cta-icon"
+            />
+          </template>
           {{ course.status === 'completed' ? 'Revisar curso' : 'Continuar curso' }}
-        </button>
+        </botao>
       </div>
     </div>
 
@@ -50,12 +53,16 @@
 import { RouterLink } from 'vue-router'
 import { ArrowLeft, Clock3, User, CheckCircle2, RotateCw } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import { useCursosStore } from '@/stores/cursos'
 
 @Component({
-  components: { RouterLink, ArrowLeft, Clock3, User, CheckCircle2, RotateCw },
+  components: { RouterLink, ArrowLeft, Clock3, User, CheckCircle2, RotateCw, Botao },
 })
 export default class DetalheCursoView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: String, required: true })
   public id!: string
@@ -189,31 +196,11 @@ export default class DetalheCursoView extends Vue {
   background-color: var(--accent);
 }
 
-.cta {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  padding: 0.625rem 0;
-  border-radius: 0.5rem;
-  color: #fff;
-  transition: background-color 0.15s ease;
-}
-
-.cta--default {
-  background-color: var(--accent);
-}
-.cta--default:hover {
-  background-color: var(--accent-hover);
-}
-
 .cta--completed {
-  background-color: var(--success);
+  background-color: var(--success) !important;
 }
-.cta--completed:hover {
-  background-color: var(--success-hover);
+.cta--completed:hover:not(:disabled) {
+  background-color: var(--success-hover) !important;
 }
 
 .cta-icon {
