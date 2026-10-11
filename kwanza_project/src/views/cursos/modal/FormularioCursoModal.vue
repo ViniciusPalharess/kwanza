@@ -1,47 +1,24 @@
 <template>
   <modal :title="editingId ? 'Editar curso' : 'Novo curso'" @close="$emit('fechar')">
     <form class="form" @submit.prevent="$emit('salvar')">
-      <div class="field">
-        <label class="label">Título</label>
-        <input v-model="form.title" required type="text" class="input" />
-      </div>
+      <campo-texto label="Título" v-model="form.title" obrigatorio />
       <div class="field-row">
-        <div class="field">
-          <label class="label">Categoria</label>
-          <input v-model="form.category" required type="text" class="input" />
-        </div>
-        <div class="field">
-          <label class="label">Carga horária (h)</label>
-          <input v-model="form.hours" type="number" min="1" class="input" />
-        </div>
+        <campo-texto label="Categoria" v-model="form.category" obrigatorio />
+        <campo-texto label="Carga horária (h)" v-model="form.hours" tipo="number" min="1" />
       </div>
-      <div class="field">
-        <label class="label">Professor(a)</label>
-        <input v-model="form.teacher" required type="text" class="input" />
-      </div>
-      <div class="field">
-        <label class="label">Descrição</label>
-        <textarea v-model="form.description" rows="2" class="input" />
-      </div>
+      <campo-texto label="Professor(a)" v-model="form.teacher" obrigatorio />
+      <campo-texto label="Descrição" v-model="form.description" multilinha :linhas="2" />
       <div class="field-row">
-        <div class="field">
-          <label class="label">Status</label>
-          <select v-model="form.status" class="input">
-            <option value="not_started">Não iniciado</option>
-            <option value="in_progress">Em andamento</option>
-            <option value="completed">Concluído</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="label">Progresso (%)</label>
-          <input v-model="form.progress" type="number" min="0" max="100" class="input" />
-        </div>
+        <campo-lista label="Status" v-model="form.status" :opcoes="opcoesStatus" />
+        <campo-texto label="Progresso (%)" v-model="form.progress" tipo="number" min="0" max="100" />
       </div>
       <div class="actions">
-        <button type="button" class="button-secondary" @click="$emit('fechar')">Cancelar</button>
-        <button type="submit" class="button-primary">
-          {{ editingId ? 'Salvar alterações' : 'Criar curso' }}
-        </button>
+        <botao :acao="AcaoBotao.cancelar" descricao="Cancelar" @click="$emit('fechar')" />
+        <botao
+          :acao="AcaoBotao.salvar"
+          tipo="submit"
+          :descricao="editingId ? 'Salvar alterações' : 'Criar curso'"
+        />
       </div>
     </form>
   </modal>
@@ -49,13 +26,19 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoLista from '@/components/campolista/CampoLista.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
 import Modal from '@/components/modal/Modal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Modal },
+  components: { Modal, Botao, CampoTexto, CampoLista },
   emits: ['salvar', 'fechar'],
 })
 export default class FormularioCursoModal extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: [Number, String], default: null })
   public editingId!: number | string | null
@@ -69,6 +52,15 @@ export default class FormularioCursoModal extends Vue {
     hours: number
     status: string
     progress: number
+  }
+
+  // public
+  public get opcoesStatus() {
+    return [
+      { valor: 'not_started', texto: 'Não iniciado' },
+      { valor: 'in_progress', texto: 'Em andamento' },
+      { valor: 'completed', texto: 'Concluído' },
+    ]
   }
 }
 </script>
@@ -86,47 +78,10 @@ export default class FormularioCursoModal extends Vue {
   gap: 0.75rem;
 }
 
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-secondary);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.5rem;
-}
-
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.button-primary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.button-primary:hover {
-  background-color: var(--accent-hover);
 }
 </style>

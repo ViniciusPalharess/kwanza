@@ -1,21 +1,15 @@
 <template>
   <modal :title="editingUserId ? 'Editar usuário' : 'Adicionar usuário'" @close="$emit('fechar')">
     <form class="form" @submit.prevent="$emit('salvar')">
-      <div>
-        <label class="label">Nome</label>
-        <input v-model="form.name" required type="text" class="input" />
-      </div>
-      <div>
-        <label class="label">Papel</label>
-        <select v-model="form.role" class="input">
-          <option v-for="role in roleOptions" :key="role" :value="role">{{ role }}</option>
-        </select>
-      </div>
+      <campo-texto label="Nome" v-model="form.name" obrigatorio />
+      <campo-lista label="Papel" v-model="form.role" :opcoes="opcoesRole" />
       <div class="actions">
-        <button type="button" class="button-secondary" @click="$emit('fechar')">Cancelar</button>
-        <button type="submit" class="button-primary">
-          {{ editingUserId ? 'Salvar' : 'Adicionar' }}
-        </button>
+        <botao :acao="AcaoBotao.cancelar" descricao="Cancelar" @click="$emit('fechar')" />
+        <botao
+          :acao="AcaoBotao.salvar"
+          tipo="submit"
+          :descricao="editingUserId ? 'Salvar' : 'Adicionar'"
+        />
       </div>
     </form>
   </modal>
@@ -23,13 +17,19 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoLista from '@/components/campolista/CampoLista.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
 import Modal from '@/components/modal/Modal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Modal },
+  components: { Modal, Botao, CampoTexto, CampoLista },
   emits: ['salvar', 'fechar'],
 })
 export default class FormularioUsuarioModal extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: [Number, String], default: null })
   public editingUserId!: number | string | null
@@ -39,6 +39,11 @@ export default class FormularioUsuarioModal extends Vue {
   // public
   @Prop({ type: Array, required: true })
   public roleOptions!: string[]
+
+  // public
+  public get opcoesRole() {
+    return this.roleOptions.map((role) => ({ valor: role, texto: role }))
+  }
 }
 </script>
 
@@ -49,47 +54,10 @@ export default class FormularioUsuarioModal extends Vue {
   gap: 0.75rem;
 }
 
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-secondary);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.5rem;
-}
-
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.button-primary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.button-primary:hover {
-  background-color: var(--accent-hover);
 }
 </style>

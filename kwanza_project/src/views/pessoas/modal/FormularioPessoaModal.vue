@@ -18,71 +18,66 @@
         class="file-input"
         @change="handleFileChange"
       />
-      <button
+      <botao
         v-if="!viewOnly && form.avatarUrl"
-        type="button"
+        :acao="AcaoBotao.texto"
+        tamanho="pequeno"
         class="remove-photo"
+        descricao="Remover foto"
         @click="form.avatarUrl = ''"
       >
-        <trash-2 class="remove-photo-icon" /> Remover foto
-      </button>
+        <template #icone>
+          <trash-2 class="remove-photo-icon" />
+        </template>
+      </botao>
       <p v-else-if="!viewOnly" class="avatar-hint">Clique na foto para adicionar</p>
     </div>
 
     <form class="form" @submit.prevent="$emit('salvar')">
-      <div class="field">
-        <label class="label">Nome completo</label>
-        <input v-model="form.name" :disabled="viewOnly" required type="text" class="input" />
-      </div>
+      <campo-texto label="Nome completo" v-model="form.name" :desabilitado="viewOnly" obrigatorio />
       <div class="field-row">
-        <div class="field">
-          <label class="label">Tipo</label>
-          <select v-model="form.role" :disabled="viewOnly" class="input">
-            <option v-for="role in roleOptions" :key="role" :value="role">{{ role }}</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="label">Telefone</label>
-          <input v-model="form.phone" :disabled="viewOnly" type="text" class="input" />
-        </div>
+        <campo-lista label="Tipo" v-model="form.role" :desabilitado="viewOnly" :opcoes="opcoesRole" />
+        <campo-texto label="Telefone" v-model="form.phone" :desabilitado="viewOnly" />
       </div>
       <template v-if="form.role === 'Participante'">
         <div class="field-row">
-          <div class="field">
-            <label class="label">Nível</label>
-            <input
-              v-model="form.level"
-              :disabled="viewOnly"
-              type="number"
-              min="1"
-              max="6"
-              class="input"
-            />
-          </div>
-          <div class="field">
-            <label class="label">Pontos</label>
-            <input v-model="form.score" :disabled="viewOnly" type="number" min="0" class="input" />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Frequência (%)</label>
-          <input
-            v-model="form.attendance"
-            :disabled="viewOnly"
-            type="number"
+          <campo-texto
+            label="Nível"
+            v-model="form.level"
+            :desabilitado="viewOnly"
+            tipo="number"
+            min="1"
+            max="6"
+          />
+          <campo-texto
+            label="Pontos"
+            v-model="form.score"
+            :desabilitado="viewOnly"
+            tipo="number"
             min="0"
-            max="100"
-            class="input"
           />
         </div>
+        <campo-texto
+          label="Frequência (%)"
+          v-model="form.attendance"
+          :desabilitado="viewOnly"
+          tipo="number"
+          min="0"
+          max="100"
+        />
       </template>
       <div class="actions">
-        <button type="button" class="button-secondary" @click="$emit('fechar')">
-          {{ viewOnly ? 'Fechar' : 'Cancelar' }}
-        </button>
-        <button v-if="!viewOnly" type="submit" class="button-primary">
-          {{ editingId ? 'Salvar alterações' : 'Criar cadastro' }}
-        </button>
+        <botao
+          :acao="AcaoBotao.cancelar"
+          :descricao="viewOnly ? 'Fechar' : 'Cancelar'"
+          @click="$emit('fechar')"
+        />
+        <botao
+          v-if="!viewOnly"
+          :acao="AcaoBotao.salvar"
+          tipo="submit"
+          :descricao="editingId ? 'Salvar alterações' : 'Criar cadastro'"
+        />
       </div>
     </form>
   </modal>
@@ -91,14 +86,20 @@
 <script lang="ts">
 import { Trash2, Camera } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoLista from '@/components/campolista/CampoLista.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
 import Modal from '@/components/modal/Modal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import defaultAvatar from '@/assets/images/default-avatar.png'
 
 @Component({
-  components: { Modal, Trash2, Camera },
+  components: { Modal, Trash2, Camera, Botao, CampoTexto, CampoLista },
   emits: ['salvar', 'fechar'],
 })
 export default class FormularioPessoaModal extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Boolean, default: false })
   public viewOnly!: boolean
@@ -126,6 +127,11 @@ export default class FormularioPessoaModal extends Vue {
   // public
   public get titulo() {
     return this.viewOnly ? 'Detalhes' : this.editingId ? 'Editar cadastro' : 'Novo cadastro'
+  }
+
+  // public
+  public get opcoesRole() {
+    return this.roleOptions.map((role) => ({ valor: role, texto: role }))
   }
 
   // public
@@ -196,12 +202,8 @@ export default class FormularioPessoaModal extends Vue {
 }
 
 .remove-photo {
-  font-size: 0.75rem;
   color: var(--danger-text);
   margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
 }
 
 .remove-photo-icon {
@@ -227,54 +229,10 @@ export default class FormularioPessoaModal extends Vue {
   gap: 0.75rem;
 }
 
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-secondary);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-}
-.input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--color-brand-200);
-}
-.input:disabled {
-  opacity: 0.6;
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.5rem;
-}
-
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.button-primary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.button-primary:hover {
-  background-color: var(--accent-hover);
 }
 </style>

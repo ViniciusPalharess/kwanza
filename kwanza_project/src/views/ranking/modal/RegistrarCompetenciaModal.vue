@@ -1,36 +1,20 @@
 <template>
   <modal title="Registrar competência" @close="$emit('fechar')">
     <form class="form" @submit.prevent="$emit('salvar')">
-      <div>
-        <label class="label">Participante</label>
-        <input v-model="form.name" required list="participant-options" type="text" class="input" />
-        <datalist id="participant-options">
-          <option v-for="name in participantNames" :key="name" :value="name" />
-        </datalist>
-      </div>
+      <campo-texto label="Participante" v-model="form.name" obrigatorio lista="participant-options" />
+      <datalist id="participant-options">
+        <option v-for="name in participantNames" :key="name" :value="name" />
+      </datalist>
+
       <div class="field-row">
-        <div>
-          <label class="label">Competência</label>
-          <select v-model="form.competency" class="input">
-            <option v-for="name in competencyNames" :key="name" :value="name">{{ name }}</option>
-          </select>
-        </div>
-        <div>
-          <label class="label">Data</label>
-          <input v-model="form.date" type="text" placeholder="dd/mm/aaaa" class="input" />
-        </div>
+        <campo-lista label="Competência" v-model="form.competency" :opcoes="opcoesCompetencia" />
+        <campo-texto label="Data" v-model="form.date" placeholder="dd/mm/aaaa" />
       </div>
-      <div>
-        <label class="label">Pontos</label>
-        <input v-model="form.points" type="number" min="0" class="input" />
-      </div>
-      <div>
-        <label class="label">Observação</label>
-        <textarea v-model="form.description" rows="2" class="input" />
-      </div>
+      <campo-texto label="Pontos" v-model="form.points" tipo="number" min="0" />
+      <campo-texto label="Observação" v-model="form.description" multilinha :linhas="2" />
       <div class="actions">
-        <button type="button" class="button-secondary" @click="$emit('fechar')">Cancelar</button>
-        <button type="submit" class="button-primary">Salvar</button>
+        <botao :acao="AcaoBotao.cancelar" descricao="Cancelar" @click="$emit('fechar')" />
+        <botao :acao="AcaoBotao.salvar" tipo="submit" descricao="Salvar" />
       </div>
     </form>
   </modal>
@@ -38,13 +22,19 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import CampoLista from '@/components/campolista/CampoLista.vue'
+import CampoTexto from '@/components/campotexto/CampoTexto.vue'
 import Modal from '@/components/modal/Modal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { Modal },
+  components: { Modal, Botao, CampoTexto, CampoLista },
   emits: ['salvar', 'fechar'],
 })
 export default class RegistrarCompetenciaModal extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Object, required: true })
   public form!: {
@@ -60,6 +50,11 @@ export default class RegistrarCompetenciaModal extends Vue {
   // public
   @Prop({ type: Array, required: true })
   public participantNames!: string[]
+
+  // public
+  public get opcoesCompetencia() {
+    return this.competencyNames.map((name) => ({ valor: name, texto: name }))
+  }
 }
 </script>
 
@@ -76,47 +71,10 @@ export default class RegistrarCompetenciaModal extends Vue {
   gap: 0.75rem;
 }
 
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-secondary);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.5rem;
-}
-
-.button-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.button-primary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.button-primary:hover {
-  background-color: var(--accent-hover);
 }
 </style>
