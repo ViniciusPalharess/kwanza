@@ -2,9 +2,11 @@
   <div class="card">
     <div class="header">
       <h2 class="title">Todos os certificados</h2>
-      <button type="button" class="new-button" @click="$emit('criar')">
-        <plus class="new-icon" /> Emitir
-      </button>
+      <botao :acao="AcaoBotao.adicionar" descricao="Emitir" @click="$emit('criar')">
+        <template #icone>
+          <plus class="new-icon" />
+        </template>
+      </botao>
     </div>
 
     <div class="table-wrapper">
@@ -28,19 +30,36 @@
             <td class="cell"><selo-status :status="cert.status" /></td>
             <td class="cell">
               <div class="row-actions">
-                <button type="button" class="icon-button" @click="$emit('visualizar', cert)">
-                  <eye class="icon" />
-                </button>
-                <button type="button" class="icon-button" @click="$emit('editar', cert)">
-                  <pencil class="icon" />
-                </button>
-                <button
-                  type="button"
-                  class="icon-button icon-button--danger"
+                <botao
+                  :acao="AcaoBotao.outro"
+                  tamanho="pequeno"
+                  somente-icone
+                  @click="$emit('visualizar', cert)"
+                >
+                  <template #icone>
+                    <eye class="icon" />
+                  </template>
+                </botao>
+                <botao
+                  :acao="AcaoBotao.outro"
+                  tamanho="pequeno"
+                  somente-icone
+                  @click="$emit('editar', cert)"
+                >
+                  <template #icone>
+                    <pencil class="icon" />
+                  </template>
+                </botao>
+                <botao
+                  :acao="AcaoBotao.excluir"
+                  tamanho="pequeno"
+                  somente-icone
                   @click="$emit('excluir', cert)"
                 >
-                  <trash-2 class="icon" />
-                </button>
+                  <template #icone>
+                    <trash-2 class="icon" />
+                  </template>
+                </botao>
               </div>
             </td>
           </tr>
@@ -53,13 +72,17 @@
 <script lang="ts">
 import { Plus, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
 import SeloStatus from '@/components/selostatus/SeloStatus.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { SeloStatus, Plus, Eye, Pencil, Trash2 },
+  components: { SeloStatus, Botao, Plus, Eye, Pencil, Trash2 },
   emits: ['criar', 'visualizar', 'editar', 'excluir'],
 })
 export default class ListaCertificadosView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Array, required: true })
   public certificados!: any[]
@@ -85,22 +108,6 @@ export default class ListaCertificadosView extends Vue {
   font-weight: 700;
   font-size: 1.125rem;
   color: var(--text-primary);
-}
-
-.new-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.15s ease;
-}
-.new-button:hover {
-  background-color: var(--accent-hover);
 }
 
 .new-icon {
@@ -167,14 +174,6 @@ export default class ListaCertificadosView extends Vue {
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
-  color: var(--text-faint);
-}
-
-.icon-button:hover {
-  color: var(--accent-text);
-}
-.icon-button--danger:hover {
-  color: var(--danger-text);
 }
 
 .icon {

@@ -6,16 +6,29 @@
         <p class="subtitle">Análises e indicadores do projeto</p>
       </div>
       <div class="header-actions">
-        <button type="button" class="export-button"><file-text class="export-icon" /> PDF</button>
-        <button type="button" class="export-button"><sheet class="export-icon" /> Excel</button>
+        <botao :acao="AcaoBotao.cancelar" class="export-button" descricao="PDF">
+          <template #icone>
+            <file-text class="export-icon" />
+          </template>
+        </botao>
+        <botao :acao="AcaoBotao.cancelar" class="export-button" descricao="Excel">
+          <template #icone>
+            <sheet class="export-icon" />
+          </template>
+        </botao>
       </div>
     </div>
 
     <div class="filters-bar">
       <span class="filters-label">Filtros:</span>
-      <button v-for="filter in filters" :key="filter" type="button" class="filter-chip">
+      <botao
+        v-for="filter in filters"
+        :key="filter"
+        :acao="AcaoBotao.cancelar"
+        class="filter-chip"
+      >
         {{ filter }} <chevron-down class="filter-chip-icon" />
-      </button>
+      </botao>
     </div>
 
     <div class="charts-grid">
@@ -53,14 +66,18 @@ import {
   attendanceMonthlyValues,
   reportHoursByMonth,
 } from '@/data/dadosSimulados'
+import Botao from '@/components/botao/Botao.vue'
 import GraficoRosca from '@/components/graficorosca/GraficoRosca.vue'
 import GraficoLinha from '@/components/graficolinha/GraficoLinha.vue'
 import GraficoBarras from '@/components/graficobarras/GraficoBarras.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { GraficoRosca, GraficoLinha, GraficoBarras, FileText, Sheet, ChevronDown },
+  components: { GraficoRosca, GraficoLinha, GraficoBarras, Botao, FileText, Sheet, ChevronDown },
 })
 export default class RelatoriosView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public filters = ['Participante', 'Curso', 'Período', 'Competência']
   // public
@@ -117,15 +134,7 @@ export default class RelatoriosView extends Vue {
 }
 
 .export-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  background-color: var(--surface);
+  background-color: var(--surface) !important;
 }
 
 .export-icon {
@@ -152,14 +161,10 @@ export default class RelatoriosView extends Vue {
 }
 
 .filter-chip {
-  display: flex;
-  align-items: center;
+  padding: 0.375rem 0.75rem !important;
+}
+.filter-chip :deep(.botao__descricao) {
   gap: 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
 }
 
 .filter-chip-icon {

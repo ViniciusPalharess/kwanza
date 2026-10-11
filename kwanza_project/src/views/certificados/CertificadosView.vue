@@ -35,20 +35,26 @@
         >, com carga horária de {{ featuredCertificate.hours }} horas.
       </p>
       <div class="featured-actions">
-        <button
-          type="button"
+        <botao
+          :acao="AcaoBotao.outro"
           class="featured-button featured-button--light"
+          descricao="Download PDF"
           @click="printCertificate"
         >
-          <download class="featured-button-icon" /> Download PDF
-        </button>
-        <button
-          type="button"
+          <template #icone>
+            <download class="featured-button-icon" />
+          </template>
+        </botao>
+        <botao
+          :acao="AcaoBotao.outro"
           class="featured-button featured-button--outline"
+          descricao="Visualizar"
           @click="printCertificate"
         >
-          <eye class="featured-button-icon" /> Visualizar
-        </button>
+          <template #icone>
+            <eye class="featured-button-icon" />
+          </template>
+        </botao>
       </div>
     </div>
 
@@ -87,10 +93,12 @@ import { certificateStats, featuredCertificate } from '@/data/dadosSimulados'
 import { useCertificadosStore } from '@/stores/certificados'
 import { usePessoasStore } from '@/stores/pessoas'
 import { useCursosStore } from '@/stores/cursos'
+import Botao from '@/components/botao/Botao.vue'
 import CartaoEstatistica from '@/components/cartaoestatistica/CartaoEstatistica.vue'
 import DialogoConfirmacao from '@/components/dialogoconfirmacao/DialogoConfirmacao.vue'
 import ListaCertificadosView from '@/views/certificados/views/ListaCertificadosView.vue'
 import FormularioCertificadoModal from '@/views/certificados/modal/FormularioCertificadoModal.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 const emptyForm = () => ({ name: '', course: '', hours: 10, status: 'Emitido', date: '' })
 
@@ -101,6 +109,7 @@ function todayLabel() {
 
 @Component({
   components: {
+    Botao,
     CartaoEstatistica,
     DialogoConfirmacao,
     ListaCertificadosView,
@@ -115,6 +124,8 @@ function todayLabel() {
   },
 })
 export default class CertificadosView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public certificateStats = certificateStats
   // public
@@ -274,25 +285,15 @@ export default class CertificadosView extends Vue {
   margin-top: 1.5rem;
 }
 
-.featured-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+.featured-button.featured-button--light {
+  background-color: #fff !important;
+  color: var(--color-brand-700) !important;
 }
 
-.featured-button--light {
-  background-color: #fff;
-  color: var(--color-brand-700);
-}
-
-.featured-button--outline {
-  background-color: rgb(255 255 255 / 0.1);
-  border: 1px solid rgb(255 255 255 / 0.3);
-  color: #fff;
+.featured-button.featured-button--outline {
+  background-color: rgb(255 255 255 / 0.1) !important;
+  border: 1px solid rgb(255 255 255 / 0.3) !important;
+  color: #fff !important;
 }
 
 .featured-button-icon {

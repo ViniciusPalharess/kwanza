@@ -9,40 +9,50 @@
 
       <ul class="list">
         <li v-for="item in itens" :key="item.person.id" class="row">
-          <button
-            type="button"
+          <botao
+            :acao="AcaoBotao.texto"
             class="person-button"
             @click="$emit('selecionarParticipante', item.person)"
           >
-            <img
-              :src="item.person.avatarUrl || defaultAvatar"
-              alt="Foto de perfil"
-              class="avatar"
-            />
+            <template #icone>
+              <img
+                :src="item.person.avatarUrl || defaultAvatar"
+                alt="Foto de perfil"
+                class="avatar"
+              />
+            </template>
             <span class="person-info">
               <p class="person-name">{{ item.person.name }}</p>
               <p class="person-meta">
                 {{ item.stats.present }}/{{ item.stats.total }} · {{ item.person.attendance }}%
               </p>
             </span>
-          </button>
+          </botao>
           <div class="row-actions">
-            <button
-              type="button"
+            <botao
+              :acao="AcaoBotao.outro"
+              tamanho="pequeno"
               class="status-button"
               :class="{ 'status-button--present': item.presente }"
+              descricao="Presente"
               @click="$emit('marcarPresente', item.person.id)"
             >
-              <check class="status-icon" /> Presente
-            </button>
-            <button
-              type="button"
+              <template #icone>
+                <check class="status-icon" />
+              </template>
+            </botao>
+            <botao
+              :acao="AcaoBotao.outro"
+              tamanho="pequeno"
               class="status-button"
               :class="{ 'status-button--absent': !item.presente }"
+              descricao="Ausente"
               @click="$emit('marcarAusente', item.person.id)"
             >
-              <x class="status-icon" /> Ausente
-            </button>
+              <template #icone>
+                <x class="status-icon" />
+              </template>
+            </botao>
           </div>
         </li>
       </ul>
@@ -56,13 +66,17 @@
 <script lang="ts">
 import { Check, X } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 import defaultAvatar from '@/assets/images/default-avatar.png'
 
 @Component({
-  components: { Check, X },
+  components: { Check, X, Botao },
   emits: ['selecionarParticipante', 'marcarPresente', 'marcarAusente'],
 })
 export default class ListaPresencaView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Boolean, required: true })
   public hasDataForSelected!: boolean
@@ -134,12 +148,11 @@ export default class ListaPresencaView extends Vue {
 }
 
 .person-button {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   flex: 1;
   min-width: 0;
   text-align: left;
+  gap: 0.75rem !important;
+  padding: 0 !important;
 }
 
 .avatar {
@@ -176,28 +189,20 @@ export default class ListaPresencaView extends Vue {
 }
 
 .status-button {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  transition: all 0.15s ease;
+  font-weight: 600 !important;
+  color: var(--text-muted) !important;
 }
 
 .status-button--present {
-  background-color: var(--success);
-  color: #fff;
-  border-color: transparent;
+  background-color: var(--success) !important;
+  color: #fff !important;
+  border-color: transparent !important;
 }
 
 .status-button--absent {
-  background-color: var(--danger-text);
-  color: #fff;
-  border-color: transparent;
+  background-color: var(--danger-text) !important;
+  color: #fff !important;
+  border-color: transparent !important;
 }
 
 .status-icon {

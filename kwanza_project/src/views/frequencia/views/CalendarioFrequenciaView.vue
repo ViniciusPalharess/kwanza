@@ -3,13 +3,17 @@
     <div class="header">
       <h2 class="title">Calendário</h2>
       <div class="nav">
-        <button type="button" class="nav-button" @click="$emit('mesAnterior')">
-          <chevron-left class="nav-icon" />
-        </button>
+        <botao :acao="AcaoBotao.outro" tamanho="pequeno" somente-icone @click="$emit('mesAnterior')">
+          <template #icone>
+            <chevron-left class="nav-icon" />
+          </template>
+        </botao>
         <span class="month-label">{{ monthLabel }}</span>
-        <button type="button" class="nav-button" @click="$emit('mesSeguinte')">
-          <chevron-right class="nav-icon" />
-        </button>
+        <botao :acao="AcaoBotao.outro" tamanho="pequeno" somente-icone @click="$emit('mesSeguinte')">
+          <template #icone>
+            <chevron-right class="nav-icon" />
+          </template>
+        </botao>
       </div>
     </div>
     <div class="grid">
@@ -33,12 +37,16 @@
 <script lang="ts">
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { Component, Prop, Vue } from 'vue-facing-decorator'
+import Botao from '@/components/botao/Botao.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 @Component({
-  components: { ChevronLeft, ChevronRight },
+  components: { ChevronLeft, ChevronRight, Botao },
   emits: ['mesAnterior', 'mesSeguinte', 'selecionarDia'],
 })
 export default class CalendarioFrequenciaView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   @Prop({ type: Array, required: true })
   public weekDays!: string[]
@@ -101,15 +109,6 @@ export default class CalendarioFrequenciaView extends Vue {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-}
-
-.nav-button {
-  padding: 0.25rem;
-  border-radius: 0.5rem;
-  color: var(--text-muted);
-}
-.nav-button:hover {
-  background-color: var(--surface-hover);
 }
 
 .nav-icon {

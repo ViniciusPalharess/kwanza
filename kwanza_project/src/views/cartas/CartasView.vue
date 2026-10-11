@@ -5,11 +5,7 @@
         <h1 class="title">Carta de Recomendação</h1>
         <p class="subtitle">Documento de destaque para vagas e oportunidades</p>
       </div>
-      <select v-model.number="selectedId" class="select">
-        <option v-for="p in pessoasStore.participants" :key="p.id" :value="p.id">
-          {{ p.name }}
-        </option>
-      </select>
+      <campo-lista class="select" v-model.number="selectedId" :opcoes="opcoesParticipantes" />
     </div>
 
     <div v-if="selected" class="letter">
@@ -65,12 +61,16 @@
       </div>
 
       <div class="letter-actions">
-        <button type="button" class="action-button" @click="printLetter">
-          <printer class="action-icon" /> Imprimir
-        </button>
-        <button type="button" class="action-button action-button--primary" @click="printLetter">
-          <download class="action-icon" /> Gerar PDF
-        </button>
+        <botao :acao="AcaoBotao.cancelar" descricao="Imprimir" @click="printLetter">
+          <template #icone>
+            <printer class="action-icon" />
+          </template>
+        </botao>
+        <botao :acao="AcaoBotao.salvar" descricao="Gerar PDF" @click="printLetter">
+          <template #icone>
+            <download class="action-icon" />
+          </template>
+        </botao>
       </div>
     </div>
   </div>
@@ -80,6 +80,9 @@
 import { FileText, Printer, Download } from 'lucide-vue-next'
 import { Component, Vue } from 'vue-facing-decorator'
 import { usePessoasStore } from '@/stores/pessoas'
+import Botao from '@/components/botao/Botao.vue'
+import CampoLista from '@/components/campolista/CampoLista.vue'
+import { AcaoBotao } from '@/enums/AcaoBotao'
 
 function skillsFor(person: any) {
   if (!person) return []
@@ -93,9 +96,11 @@ function skillsFor(person: any) {
 }
 
 @Component({
-  components: { FileText, Printer, Download },
+  components: { FileText, Printer, Download, Botao, CampoLista },
 })
 export default class CartasView extends Vue {
+  // public
+  public AcaoBotao = AcaoBotao
   // public
   public pessoasStore = usePessoasStore()
   // public
@@ -104,6 +109,11 @@ export default class CartasView extends Vue {
   // public
   public get selected() {
     return this.pessoasStore.participants.find((p) => p.id === this.selectedId)
+  }
+
+  // public
+  public get opcoesParticipantes() {
+    return this.pessoasStore.participants.map((p) => ({ valor: p.id, texto: p.name }))
   }
 
   // public
@@ -156,13 +166,7 @@ export default class CartasView extends Vue {
 }
 
 .select {
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
   min-width: 200px;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
 }
 
 .letter {
@@ -286,27 +290,6 @@ export default class CartasView extends Vue {
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 0 1.5rem 1.5rem;
-}
-
-.action-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-}
-
-.action-button--primary {
-  background-color: var(--accent);
-  color: #fff;
-  border: none;
-}
-.action-button--primary:hover {
-  background-color: var(--accent-hover);
 }
 
 .action-icon {
