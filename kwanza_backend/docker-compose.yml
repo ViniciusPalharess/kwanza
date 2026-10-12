@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: kwanza_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kwanza
+      POSTGRES_PASSWORD: kwanza
+      POSTGRES_DB: kwanza
+    ports:
+      - '5432:5432'
+    volumes:
+      - kwanza_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  kwanza_postgres_data:
